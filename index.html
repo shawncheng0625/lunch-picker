@@ -223,6 +223,9 @@
     flex-direction: column;
     gap: 0.65rem;
     margin-bottom: 1.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 4px;
   }
   .restaurant-item {
     background: var(--surface);
@@ -700,7 +703,7 @@ function spin() {
     bowl.innerHTML = `<div class="bowl-result-name">${chosen.emoji || '🍴'}<br>${escHtml(chosen.name)}</div><div class="bowl-result-tag">${chosen.tag ? escHtml(chosen.tag) : '今日推薦'}</div>`;
     document.querySelectorAll('.restaurant-item').forEach(el => el.classList.remove('highlight'));
     const highlighted = document.getElementById('item-' + chosen.id);
-    if (highlighted) { highlighted.classList.add('highlight'); highlighted.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    if (highlighted) { highlighted.classList.add('highlight'); }
     spinning = false;
     document.getElementById('spinBtn').disabled = false;
     showToast(`🎉 今天吃「${chosen.name}」！`);
