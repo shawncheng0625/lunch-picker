@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>午餐抽籤機</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #FFF8F0;
+    --surface: #FFFFFF;
+    --surface2: #FFF1E0;
+    --accent: #E8500A;
+    --accent2: #FF7B35;
+    --text: #2A1A0A;
+    --muted: #8A6A50;
+    --border: #F0D8C0;
+    --tag-bg: #FFE8D0;
+    --tag-text: #C04010;
+    --radius: 14px;
+    --shadow: 0 4px 24px rgba(180,80,20,0.10);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    min-height: 100vh;
+    padding: 0;
+  }
+  header {
+    background: var(--accent);
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.07);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: -20px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+  }
+  header h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #FFFFFF;
+    letter-spacing: 0.06em;
+    position: relative;
+    z-index: 1;
+  }
+  header p {
+    color: rgba(255,255,255,0.75);
+    font-size: 0.95rem;
+    margin-top: 0.4rem;
+    position: relative;
+    z-index: 1;
+  }
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* SPIN SECTION */
+  .spin-section {
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+  .result-bowl {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 3px solid var(--border);
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-bowl.spinning {
+    animation: spinBowl 0.12s linear infinite;
+    border-color: var(--accent);
+    background: var(--tag-bg);
+  }
+  .result-bowl.result-show {
+    background: var(--accent);
+    border-color: var(--accent2);
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+  @keyframes spinBowl {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.04); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.7); opacity: 0.5; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .bowl-icon {
+    font-size: 3rem;
+    display: block;
+    line-height: 1;
+    transition: all 0.3s;
+  }
+  .bowl-text {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+    font-weight: 500;
+  }
+  .bowl-result-name {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #FFF;
+    padding: 0 1rem;
+    line-height: 1.3;
+  }
+  .bowl-result-tag {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.85);
+    margin-top: 0.2rem;
+  }
+  .spin-btn {
+    background: var(--accent);
+    color: #FFF;
+    border: none;
+    border-radius: 50px;
+    padding: 0.85rem 2.5rem;
+    font-size: 1.1rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.06em;
+    transition: background 0.2s, transform 0.1s;
+    box-shadow: 0 4px 16px rgba(232,80,10,0.25);
+  }
+  .spin-btn:hover { background: #C83A00; }
+  .spin-btn:active { transform: scale(0.97); }
+  .spin-btn:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+  .empty-hint {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+  }
+
+  /* TAG FILTER */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    align-items: center;
+  }
+  .filter-label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-right: 0.25rem;
+  }
+  .tag-filter-btn {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    border-radius: 50px;
+    padding: 0.3rem 0.85rem;
+    font-size: 0.82rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tag-filter-btn.active {
+    background: var(--tag-bg);
+    border-color: var(--accent2);
+    color: var(--tag-text);
+    font-weight: 500;
+  }
+
+  /* RESTAURANT LIST */
+  .section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .count-badge {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 0.75rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    border-radius: 50px;
+    padding: 0.15rem 0.6rem;
+    font-weight: 500;
+  }
+  .restaurant-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-bottom: 1.5rem;
+  }
+  .restaurant-item {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    animation: slideIn 0.25s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .restaurant-item:hover {
+    border-color: var(--accent2);
+    box-shadow: 0 2px 12px rgba(232,80,10,0.08);
+  }
+  .restaurant-item.highlight {
+    border-color: var(--accent);
+    background: #FFF3ED;
+    box-shadow: 0 0 0 3px rgba(232,80,10,0.12);
+  }
+  .rest-emoji {
+    font-size: 1.5rem;
+    width: 2.2rem;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .rest-info { flex: 1; min-width: 0; }
+  .rest-name {
+    font-weight: 700;
+    font-size: 0.97rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .rest-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.3rem;
+    align-items: center;
+  }
+  .tag-pill {
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-size: 0.72rem;
+    border-radius: 50px;
+    padding: 0.1rem 0.5rem;
+    font-weight: 500;
+  }
+  .rest-note {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .rest-actions {
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+  .icon-btn {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+    color: var(--muted);
+  }
+  .icon-btn:hover { background: var(--surface2); border-color: var(--accent2); color: var(--accent); }
+  .icon-btn.delete:hover { background: #FFF0F0; border-color: #FF8888; color: #CC2222; }
+
+  /* ADD FORM */
+  .add-card {
+    background: var(--surface);
+    border: 1.5px dashed var(--accent2);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  .add-card-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--accent);
+    margin-bottom: 0.9rem;
+  }
+  .form-row {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.65rem;
+  }
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+    min-width: 140px;
+  }
+  .form-group label {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  input[type="text"], select {
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  input[type="text"]:focus, select:focus { border-color: var(--accent); }
+  .add-btn {
+    background: var(--accent);
+    color: #FFF;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.25rem;
+    font-size: 0.9rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    align-self: flex-end;
+    white-space: nowrap;
+  }
+  .add-btn:hover { background: #C83A00; }
+  .add-btn:active { transform: scale(0.97); }
+
+  /* IMPORT / EXPORT */
+  .io-bar {
+    display: flex;
+    gap: 0.65rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .io-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.55rem 1rem;
+    font-size: 0.88rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 500;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .io-btn.export { border-color: #A5C898; color: #2E7D32; }
+  .io-btn.export:hover { background: #F1F8F1; border-color: #4CAF50; }
+  .io-btn.import { border-color: #90B8DC; color: #1565C0; }
+  .io-btn.import:hover { background: #EFF5FB; border-color: #1976D2; }
+  .io-hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    border-left: 3px solid var(--accent2);
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    background: var(--surface);
+    border-radius: var(--radius);
+    border: 1.5px dashed var(--border);
+  }
+  .empty-state .big-emoji { font-size: 3rem; display: block; margin-bottom: 0.5rem; }
+
+  /* TOAST */
+  #toast {
+    position: fixed;
+    bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--text);
+    color: #FFF;
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    z-index: 999;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 480px) {
+    header h1 { font-size: 1.6rem; }
+    .container { padding: 1.25rem 0.9rem 3rem; }
+    .spin-section { padding: 1.25rem 1rem; }
+    .form-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍱 午餐抽籤機</h1>
+  <p>今天吃什麼，交給命運決定！</p>
+</header>
+
+<div class="container">
+
+  <!-- SPIN SECTION -->
+  <div class="spin-section">
+    <div class="result-bowl" id="resultBowl">
+      <span class="bowl-icon" id="bowlIcon">🎲</span>
+      <span class="bowl-text" id="bowlText">按下抽籤</span>
+    </div>
+    <button class="spin-btn" id="spinBtn" onclick="spin()">✨ 開始抽籤！</button>
+    <p class="empty-hint" id="emptyHint" style="display:none;">請先新增至少一家店家</p>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar" id="filterBar">
+    <span class="filter-label">篩選：</span>
+    <button class="tag-filter-btn active" data-tag="all" onclick="filterTag(this, 'all')">全部</button>
+  </div>
+
+  <!-- ADD FORM -->
+  <div class="add-card">
+    <div class="add-card-title">＋ 新增店家</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>店家名稱 *</label>
+        <input type="text" id="inputName" placeholder="例：麥當勞、自助餐" maxlength="30">
+      </div>
+      <div class="form-group" style="max-width:120px;">
+        <label>圖示</label>
+        <input type="text" id="inputEmoji" placeholder="🍜" maxlength="2" style="text-align:center;font-size:1.2rem;">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>類型標籤</label>
+        <input type="text" id="inputTag" placeholder="例：日式、快餐、素食">
+      </div>
+      <div class="form-group">
+        <label>備註</label>
+        <input type="text" id="inputNote" placeholder="例：走路5分鐘" maxlength="30">
+      </div>
+      <button class="add-btn" onclick="addRestaurant()">新增</button>
+    </div>
+  </div>
+
+  <!-- RESTAURANT LIST -->
+  <div class="section-title">
+    店家清單
+    <span class="count-badge" id="countBadge">0</span>
+  </div>
+
+  <!-- IMPORT / EXPORT -->
+  <div class="io-bar">
+    <button class="io-btn export" onclick="exportExcel()">📥 匯出 Excel</button>
+    <button class="io-btn import" onclick="document.getElementById('importFile').click()">📤 匯入 Excel</button>
+    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
+  </div>
+  <div class="io-hint">
+    📋 <strong>匯出</strong>：把目前所有店家存成 <code>.xlsx</code> 檔，可用 Excel 編輯後再匯回。<br>
+    📂 <strong>匯入</strong>：選擇 Excel 檔，欄位依序為「名稱、圖示、標籤、備註」，匯入後會<strong>取代</strong>現有清單。
+  </div>
+
+  <div class="restaurant-list" id="restaurantList"></div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+const FOOD_EMOJIS = ['🍜','🍱','🍛','🍝','🥗','🌮','🍔','🍣','🥘','🍲','🥩','🍗','🍖','🫕','🌯','🥙'];
+let restaurants = JSON.parse(localStorage.getItem('lunch_restaurants') || '[]');
+let activeTag = 'all';
+let spinning = false;
+
+// Default data
+if (restaurants.length === 0) {
+  restaurants = [
+    { id: 1, name: '便利商店', emoji: '🏪', tag: '快餐', note: '最近最方便' },
+    { id: 2, name: '自助餐', emoji: '🍱', tag: '台式', note: 'CP值高' },
+    { id: 3, name: '拉麵店', emoji: '🍜', tag: '日式', note: '走路10分鐘' },
+    { id: 4, name: '鹹酥雞', emoji: '🍗', tag: '台式', note: '下午才開' },
+    { id: 5, name: '沙拉輕食', emoji: '🥗', tag: '健康', note: '減肥首選' },
+  ];
+  save();
+}
+
+function save() {
+  localStorage.setItem('lunch_restaurants', JSON.stringify(restaurants));
+}
+
+function getFiltered() {
+  if (activeTag === 'all') return restaurants;
+  return restaurants.filter(r => r.tag === activeTag);
+}
+
+function getAllTags() {
+  const tags = new Set();
+  restaurants.forEach(r => { if (r.tag) tags.add(r.tag); });
+  return [...tags];
+}
+
+function render() {
+  const list = document.getElementById('restaurantList');
+  const filtered = getFiltered();
+  document.getElementById('countBadge').textContent = filtered.length;
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><span class="big-emoji">🍽️</span>${activeTag === 'all' ? '還沒有店家，快新增一家吧！' : `「${activeTag}」分類下沒有店家`}</div>`;
+  } else {
+    list.innerHTML = filtered.map(r => `
+      <div class="restaurant-item" id="item-${r.id}">
+        <div class="rest-emoji">${r.emoji || '🍴'}</div>
+        <div class="rest-info">
+          <div class="rest-name">${escHtml(r.name)}</div>
+          <div class="rest-meta">
+            ${r.tag ? `<span class="tag-pill">${escHtml(r.tag)}</span>` : ''}
+            ${r.note ? `<span class="rest-note">${escHtml(r.note)}</span>` : ''}
+          </div>
+        </div>
+        <div class="rest-actions">
+          <button class="icon-btn delete" onclick="deleteRestaurant(${r.id})" title="刪除">🗑</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  renderFilterBar();
+
+  const spinBtn = document.getElementById('spinBtn');
+  const emptyHint = document.getElementById('emptyHint');
+  if (restaurants.length === 0) {
+    spinBtn.disabled = true;
+    emptyHint.style.display = 'block';
+  } else {
+    spinBtn.disabled = false;
+    emptyHint.style.display = 'none';
+  }
+}
+
+function renderFilterBar() {
+  const bar = document.getElementById('filterBar');
+  const tags = getAllTags();
+  bar.innerHTML = `<span class="filter-label">篩選：</span>
+    <button class="tag-filter-btn ${activeTag === 'all' ? 'active' : ''}" data-tag="all" onclick="filterTag(this,'all')">全部</button>
+    ${tags.map(t => `<button class="tag-filter-btn ${activeTag === t ? 'active' : ''}" data-tag="${escHtml(t)}" onclick="filterTag(this,'${escHtml(t)}')">${escHtml(t)}</button>`).join('')}`;
+}
+
+function filterTag(btn, tag) {
+  activeTag = tag;
+  render();
+}
+
+function addRestaurant() {
+  const name = document.getElementById('inputName').value.trim();
+  if (!name) { showToast('請輸入店家名稱！'); document.getElementById('inputName').focus(); return; }
+  const emoji = document.getElementById('inputEmoji').value.trim() || FOOD_EMOJIS[Math.floor(Math.random() * FOOD_EMOJIS.length)];
+  const tag = document.getElementById('inputTag').value.trim();
+  const note = document.getElementById('inputNote').value.trim();
+  restaurants.push({ id: Date.now(), name, emoji, tag, note });
+  save();
+  document.getElementById('inputName').value = '';
+  document.getElementById('inputEmoji').value = '';
+  document.getElementById('inputTag').value = '';
+  document.getElementById('inputNote').value = '';
+  render();
+  showToast(`✅ 已新增「${name}」！`);
+}
+
+function deleteRestaurant(id) {
+  const r = restaurants.find(r => r.id === id);
+  restaurants = restaurants.filter(r => r.id !== id);
+  save();
+  render();
+  if (r) showToast(`已刪除「${r.name}」`);
+}
+
+// ── 匯出 Excel ──
+function exportExcel() {
+  if (restaurants.length === 0) { showToast('目前沒有店家可以匯出！'); return; }
+  const data = [
+    ['名稱', '圖示', '標籤', '備註'],
+    ...restaurants.map(r => [r.name, r.emoji || '', r.tag || '', r.note || ''])
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  ws['!cols'] = [{ wch: 20 }, { wch: 6 }, { wch: 12 }, { wch: 20 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '午餐店家');
+  XLSX.writeFile(wb, '午餐店家清單.xlsx');
+  showToast(`📥 已匯出 ${restaurants.length} 家店家！`);
+}
+
+// ── 匯入 Excel ──
+function importExcel(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'binary' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+      // 跳過第一列（標題列）
+      const imported = [];
+      for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const name = (row[0] || '').toString().trim();
+        if (!name) continue;
+        imported.push({
+          id: Date.now() + i,
+          name: name,
+          emoji: (row[1] || '').toString().trim() || FOOD_EMOJIS[Math.floor(Math.random() * FOOD_EMOJIS.length)],
+          tag:  (row[2] || '').toString().trim(),
+          note: (row[3] || '').toString().trim(),
+        });
+      }
+      if (imported.length === 0) { showToast('⚠️ 沒有讀到有效資料，請確認格式！'); return; }
+      if (!confirm(`即將匯入 ${imported.length} 家店家，並取代目前清單，確定嗎？`)) return;
+      restaurants = imported;
+      activeTag = 'all';
+      save();
+      render();
+      showToast(`📂 已匯入 ${imported.length} 家店家！`);
+    } catch(err) {
+      showToast('⚠️ 讀取失敗，請確認是有效的 Excel 檔！');
+    }
+  };
+  reader.readAsBinaryString(file);
+  event.target.value = '';
+}
+
+function spin() {
+  if (spinning) return;
+  const pool = getFiltered();
+  if (pool.length === 0) { showToast('沒有符合的店家！'); return; }
+  spinning = true;
+  const bowl = document.getElementById('resultBowl');
+  const icon = document.getElementById('bowlIcon');
+  const text = document.getElementById('bowlText');
+  bowl.className = 'result-bowl spinning';
+  document.getElementById('spinBtn').disabled = true;
+
+  const chosen = pool[Math.floor(Math.random() * pool.length)];
+
+  const interval = setInterval(() => {
+    const r = pool[Math.floor(Math.random() * pool.length)];
+    icon.textContent = r.emoji || '🍴';
+    text.textContent = r.name;
+    text.style.fontSize = '0.85rem';
+    text.style.color = 'var(--muted)';
+  }, 90);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    bowl.className = 'result-bowl result-show';
+    bowl.innerHTML = `<div class="bowl-result-name">${chosen.emoji || '🍴'}<br>${escHtml(chosen.name)}</div><div class="bowl-result-tag">${chosen.tag ? escHtml(chosen.tag) : '今日推薦'}</div>`;
+    document.querySelectorAll('.restaurant-item').forEach(el => el.classList.remove('highlight'));
+    const highlighted = document.getElementById('item-' + chosen.id);
+    if (highlighted) { highlighted.classList.add('highlight'); highlighted.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+    spinning = false;
+    document.getElementById('spinBtn').disabled = false;
+    showToast(`🎉 今天吃「${chosen.name}」！`);
+  }, 3000);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+document.getElementById('inputName').addEventListener('keydown', e => { if (e.key === 'Enter') addRestaurant(); });
+
+render();
+</script>
+</body>
+</html>
