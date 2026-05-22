@@ -258,6 +258,7 @@ const FOOD_EMOJIS = ['🍜','🍱','🍛','🍝','🥗','🌮','🍔','🍣','�
 let restaurants = JSON.parse(localStorage.getItem('lunch_restaurants') || '[]');
 let activeTag = 'all';
 let spinning = false;
+let lastChosenId = null;
 
 if (restaurants.length === 0) {
   restaurants = [
@@ -434,7 +435,8 @@ function spin() {
   const text = document.getElementById('bowlText');
   bowl.className = 'result-bowl spinning';
   document.getElementById('spinBtn').disabled = true;
-  const chosen = pool[Math.floor(Math.random() * pool.length)];
+  const pickPool = pool.length > 1 ? pool.filter(r => r.id !== lastChosenId) : pool;
+  const chosen = pickPool[Math.floor(Math.random() * pickPool.length)];
   const interval = setInterval(() => {
     const r = pool[Math.floor(Math.random() * pool.length)];
     icon.textContent = r.emoji || '🍴';
@@ -448,10 +450,11 @@ function spin() {
     document.querySelectorAll('.restaurant-item').forEach(el => el.classList.remove('highlight'));
     const hl = document.getElementById('item-' + chosen.id);
     if (hl) hl.classList.add('highlight');
+    lastChosenId = chosen.id;
     spinning = false;
     document.getElementById('spinBtn').disabled = false;
     showToast(`🎉 今天吃「${chosen.name}」！`);
-  }, 1000);
+  }, 3000);
 }
 
 // ── Utils ──
