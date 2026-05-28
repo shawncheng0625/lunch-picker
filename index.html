@@ -13,10 +13,14 @@
     --accent:#E8500A; --accent2:#FF7B35;
     --text:#2A1A0A; --muted:#8A6A50;
     --border:#F0D8C0; --tag-bg:#FFE8D0; --tag-text:#C04010;
+    --blue:#1565C0; --blue-light:#EFF5FB; --blue-border:#90B8DC;
+    --green:#2E7D32; --green-light:#F1F8F1; --green-border:#A5C898;
     --radius:14px; --shadow:0 4px 24px rgba(180,80,20,0.10);
   }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { background:var(--bg); color:var(--text); font-family:'Noto Sans TC',sans-serif; min-height:100vh; }
+
+  /* HEADER */
   header { background:var(--accent); padding:2rem 2rem 1.5rem; text-align:center; position:relative; overflow:hidden; }
   header::before { content:''; position:absolute; top:-40px; right:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.07); }
   header::after  { content:''; position:absolute; bottom:-60px; left:-20px; width:160px; height:160px; border-radius:50%; background:rgba(255,255,255,0.05); }
@@ -26,28 +30,77 @@
 
   /* SPIN */
   .spin-section { background:var(--surface); border-radius:var(--radius); border:1.5px solid var(--border); padding:2rem; text-align:center; margin-bottom:1.5rem; box-shadow:var(--shadow); }
-  .result-bowl { width:180px; height:180px; border-radius:50%; background:var(--surface2); border:3px solid var(--border); margin:0 auto 1.5rem; display:flex; align-items:center; justify-content:center; flex-direction:column; transition:all 0.3s; overflow:hidden; }
+  .result-bowl { width:180px; height:180px; border-radius:50%; background:var(--surface2); border:3px solid var(--border); margin:0 auto 1rem; display:flex; align-items:center; justify-content:center; flex-direction:column; transition:all 0.3s; overflow:hidden; }
   .result-bowl.spinning { animation:spinBowl 0.12s linear infinite; border-color:var(--accent); background:var(--tag-bg); }
   .result-bowl.result-show { background:var(--accent); border-color:var(--accent2); animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
   @keyframes spinBowl { 0%{transform:rotate(0deg) scale(1)} 50%{transform:rotate(180deg) scale(1.04)} 100%{transform:rotate(360deg) scale(1)} }
   @keyframes popIn { 0%{transform:scale(0.7);opacity:0.5} 100%{transform:scale(1);opacity:1} }
   .bowl-icon { font-size:3rem; display:block; line-height:1; }
   .bowl-text { font-size:0.85rem; color:var(--muted); margin-top:0.3rem; font-weight:500; }
-  .bowl-result-name { font-family:'Noto Serif TC',serif; font-size:1.25rem; font-weight:700; color:#FFF; padding:0 1rem; line-height:1.3; }
+  .bowl-result-name { font-family:'Noto Serif TC',serif; font-size:1.2rem; font-weight:700; color:#FFF; padding:0 1rem; line-height:1.3; }
   .bowl-result-tag { font-size:0.78rem; color:rgba(255,255,255,0.85); margin-top:0.2rem; }
-  .spin-btn { background:var(--accent); color:#FFF; border:none; border-radius:50px; padding:0.85rem 2.5rem; font-size:1.1rem; font-family:'Noto Sans TC',sans-serif; font-weight:700; cursor:pointer; letter-spacing:0.06em; transition:background 0.2s,transform 0.1s; box-shadow:0 4px 16px rgba(232,80,10,0.25); }
+
+  /* MODE BAR */
+  .mode-bar { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; flex-wrap:wrap; }
+  .mode-label { font-size:0.82rem; color:var(--muted); font-weight:500; white-space:nowrap; }
+  .mode-select { background:var(--surface); border:1.5px solid var(--accent2); border-radius:50px; padding:0.3rem 0.9rem; font-size:0.85rem; font-family:'Noto Sans TC',sans-serif; color:var(--accent); font-weight:700; outline:none; cursor:pointer; }
+  .mode-select:focus { border-color:var(--accent); }
+  .region-select { background:var(--surface); border:1.5px solid var(--blue-border); border-radius:50px; padding:0.3rem 0.9rem; font-size:0.85rem; font-family:'Noto Sans TC',sans-serif; color:var(--blue); font-weight:500; outline:none; cursor:pointer; display:none; }
+
+  .spin-btn { background:var(--accent); color:#FFF; border:none; border-radius:50px; padding:0.85rem 2.5rem; font-size:1.1rem; font-family:'Noto Sans TC',sans-serif; font-weight:700; cursor:pointer; letter-spacing:0.06em; transition:background 0.2s,transform 0.1s; box-shadow:0 4px 16px rgba(232,80,10,0.25); margin-top:0.5rem; }
   .spin-btn:hover { background:#C83A00; }
   .spin-btn:active { transform:scale(0.97); }
   .spin-btn:disabled { background:#ccc; cursor:not-allowed; box-shadow:none; }
-  .empty-hint { color:var(--muted); font-size:0.9rem; margin-top:0.75rem; }
+  .empty-hint { color:var(--muted); font-size:0.85rem; margin-top:0.5rem; }
 
   /* FILTER */
   .filter-bar { display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:1.25rem; align-items:center; }
-  .filter-label { font-size:0.85rem; color:var(--muted); font-weight:500; margin-right:0.25rem; }
+  .filter-label { font-size:0.85rem; color:var(--muted); font-weight:500; }
   .tag-filter-btn { background:var(--surface); border:1.5px solid var(--border); color:var(--muted); border-radius:50px; padding:0.3rem 0.85rem; font-size:0.82rem; font-family:'Noto Sans TC',sans-serif; cursor:pointer; transition:all 0.15s; }
   .tag-filter-btn.active { background:var(--tag-bg); border-color:var(--accent2); color:var(--tag-text); font-weight:500; }
 
-  /* LIST */
+  /* CARD */
+  .card { background:var(--surface); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem; }
+  .card.dashed-orange { border:1.5px dashed var(--accent2); }
+  .card.dashed-blue   { border:1.5px dashed var(--blue-border); }
+  .card-title { font-weight:700; font-size:0.95rem; margin-bottom:0.9rem; }
+  .card-title.orange { color:var(--accent); }
+  .card-title.blue   { color:var(--blue); }
+
+  /* FORM */
+  .form-row { display:flex; gap:0.65rem; flex-wrap:wrap; margin-bottom:0.65rem; }
+  .form-group { display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:130px; }
+  .form-group label { font-size:0.78rem; color:var(--muted); font-weight:500; }
+  input[type="text"], select.form-select {
+    background:var(--bg); border:1.5px solid var(--border); border-radius:8px;
+    padding:0.5rem 0.75rem; font-size:0.9rem; font-family:'Noto Sans TC',sans-serif;
+    color:var(--text); outline:none; transition:border-color 0.15s; width:100%;
+  }
+  input[type="text"]:focus, select.form-select:focus { border-color:var(--accent); }
+  .btn { border:none; border-radius:8px; padding:0.55rem 1.25rem; font-size:0.9rem; font-family:'Noto Sans TC',sans-serif; font-weight:700; cursor:pointer; transition:all 0.15s; white-space:nowrap; align-self:flex-end; }
+  .btn-orange { background:var(--accent); color:#FFF; }
+  .btn-orange:hover { background:#C83A00; }
+  .btn-blue { background:var(--blue); color:#FFF; }
+  .btn-blue:hover { background:#0D47A1; }
+  .btn-blue:disabled { background:#ccc; cursor:not-allowed; }
+  .btn-ghost { background:var(--surface2); color:var(--muted); border:1.5px solid var(--border); }
+  .btn-ghost:hover { background:var(--border); }
+
+  /* EMOJI PICKER */
+  .emoji-field { position:relative; }
+  .emoji-trigger { display:flex; gap:0.4rem; align-items:center; background:var(--bg); border:1.5px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; cursor:pointer; transition:border-color 0.15s; user-select:none; }
+  .emoji-trigger:hover { border-color:var(--accent2); }
+  .emoji-trigger .selected-emoji { font-size:1.3rem; line-height:1; }
+  .emoji-trigger .trigger-hint { font-size:0.78rem; color:var(--muted); }
+  .emoji-picker-popup { display:none; position:absolute; z-index:300; top:calc(100% + 6px); left:0; background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:0.75rem; box-shadow:0 8px 32px rgba(0,0,0,0.15); width:280px; max-height:260px; overflow-y:auto; }
+  .emoji-picker-popup.open { display:block; }
+  .emoji-category-label { font-size:0.7rem; color:var(--muted); font-weight:700; margin:0.5rem 0 0.25rem; letter-spacing:0.05em; }
+  .emoji-grid { display:flex; flex-wrap:wrap; gap:2px; margin-bottom:0.25rem; }
+  .emoji-opt { font-size:1.3rem; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer; transition:background 0.1s; border:none; background:transparent; }
+  .emoji-opt:hover { background:var(--surface2); }
+  .emoji-opt.selected { background:var(--tag-bg); outline:2px solid var(--accent2); }
+
+  /* RESTAURANT LIST */
   .section-title { font-family:'Noto Serif TC',serif; font-size:1.1rem; font-weight:700; color:var(--text); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
   .count-badge { background:var(--tag-bg); color:var(--tag-text); font-size:0.75rem; font-family:'Noto Sans TC',sans-serif; border-radius:50px; padding:0.15rem 0.6rem; font-weight:500; }
   .restaurant-list { display:flex; flex-direction:column; gap:0.65rem; margin-bottom:1.5rem; max-height:400px; overflow-y:auto; padding-right:4px; }
@@ -60,73 +113,33 @@
   .rest-name { font-weight:700; font-size:0.97rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .rest-meta { display:flex; flex-wrap:wrap; gap:0.3rem; margin-top:0.3rem; align-items:center; }
   .tag-pill { background:var(--tag-bg); color:var(--tag-text); font-size:0.72rem; border-radius:50px; padding:0.1rem 0.5rem; font-weight:500; }
+  .region-pill { background:var(--blue-light); color:var(--blue); font-size:0.72rem; border-radius:50px; padding:0.1rem 0.5rem; font-weight:500; border:1px solid var(--blue-border); }
   .rest-note { font-size:0.78rem; color:var(--muted); }
   .rest-actions { display:flex; gap:0.4rem; flex-shrink:0; }
   .icon-btn { background:transparent; border:1.5px solid var(--border); border-radius:8px; width:32px; height:32px; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; transition:all 0.15s; color:var(--muted); }
   .icon-btn:hover { background:var(--surface2); border-color:var(--accent2); color:var(--accent); }
   .icon-btn.delete:hover { background:#FFF0F0; border-color:#FF8888; color:#CC2222; }
 
-  /* ADD / EDIT FORM */
-  .add-card { background:var(--surface); border:1.5px dashed var(--accent2); border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem; }
-  .add-card-title { font-weight:700; font-size:0.95rem; color:var(--accent); margin-bottom:0.9rem; }
-  .form-row { display:flex; gap:0.65rem; flex-wrap:wrap; margin-bottom:0.65rem; }
-  .form-group { display:flex; flex-direction:column; gap:0.3rem; flex:1; min-width:140px; }
-  .form-group label { font-size:0.78rem; color:var(--muted); font-weight:500; }
-  input[type="text"] { background:var(--bg); border:1.5px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.9rem; font-family:'Noto Sans TC',sans-serif; color:var(--text); outline:none; transition:border-color 0.15s; width:100%; }
-  input[type="text"]:focus { border-color:var(--accent); }
-  .add-btn { background:var(--accent); color:#FFF; border:none; border-radius:8px; padding:0.55rem 1.25rem; font-size:0.9rem; font-family:'Noto Sans TC',sans-serif; font-weight:700; cursor:pointer; transition:background 0.15s,transform 0.1s; align-self:flex-end; white-space:nowrap; }
-  .add-btn:hover { background:#C83A00; }
-  .add-btn:active { transform:scale(0.97); }
-  .cancel-btn { background:var(--surface2); color:var(--muted); border:1.5px solid var(--border); border-radius:8px; padding:0.55rem 1rem; font-size:0.9rem; font-family:'Noto Sans TC',sans-serif; font-weight:500; cursor:pointer; align-self:flex-end; white-space:nowrap; }
-  .cancel-btn:hover { background:var(--border); }
-
-  /* EMOJI PICKER */
-  .emoji-field { position:relative; }
-  .emoji-trigger { display:flex; gap:0.4rem; align-items:center; background:var(--bg); border:1.5px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; cursor:pointer; transition:border-color 0.15s; user-select:none; }
-  .emoji-trigger:hover { border-color:var(--accent2); }
-  .emoji-trigger .selected-emoji { font-size:1.3rem; line-height:1; }
-  .emoji-trigger .trigger-hint { font-size:0.78rem; color:var(--muted); }
-  .emoji-picker-popup {
-    display:none; position:absolute; z-index:300; top:calc(100% + 6px); left:0;
-    background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius);
-    padding:0.75rem; box-shadow:0 8px 32px rgba(0,0,0,0.15); width:280px; max-height:260px; overflow-y:auto;
-  }
-  .emoji-picker-popup.open { display:block; }
-  .emoji-category-label { font-size:0.7rem; color:var(--muted); font-weight:700; margin:0.5rem 0 0.25rem; letter-spacing:0.05em; }
-  .emoji-grid { display:flex; flex-wrap:wrap; gap:2px; margin-bottom:0.25rem; }
-  .emoji-opt { font-size:1.3rem; width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer; transition:background 0.1s; border:none; background:transparent; }
-  .emoji-opt:hover { background:var(--surface2); }
-  .emoji-opt.selected { background:var(--tag-bg); outline:2px solid var(--accent2); }
-
-  /* IMPORT / EXPORT */
+  /* IO */
   .io-bar { display:flex; gap:0.65rem; margin-bottom:0.75rem; flex-wrap:wrap; }
   .io-btn { display:flex; align-items:center; gap:0.4rem; background:var(--surface); border:1.5px solid var(--border); border-radius:8px; padding:0.55rem 1rem; font-size:0.88rem; font-family:'Noto Sans TC',sans-serif; font-weight:500; color:var(--text); cursor:pointer; transition:all 0.15s; }
-  .io-btn.export { border-color:#A5C898; color:#2E7D32; }
-  .io-btn.export:hover { background:#F1F8F1; border-color:#4CAF50; }
-  .io-btn.import { border-color:#90B8DC; color:#1565C0; }
-  .io-btn.import:hover { background:#EFF5FB; border-color:#1976D2; }
+  .io-btn.export { border-color:var(--green-border); color:var(--green); }
+  .io-btn.export:hover { background:var(--green-light); }
+  .io-btn.import { border-color:var(--blue-border); color:var(--blue); }
+  .io-btn.import:hover { background:var(--blue-light); }
   .io-hint { font-size:0.78rem; color:var(--muted); margin-bottom:1.5rem; line-height:1.7; background:var(--surface2); border-radius:8px; padding:0.65rem 0.9rem; border-left:3px solid var(--accent2); }
 
-
-  /* NEARBY SEARCH */
-  .nearby-card { background:var(--surface); border:1.5px dashed #90B8DC; border-radius:var(--radius); padding:1.25rem; margin-bottom:1.5rem; }
-  .nearby-card-title { font-weight:700; font-size:0.95rem; color:#1565C0; margin-bottom:0.9rem; }
-  select.nearby-select { background:var(--bg); border:1.5px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.9rem; font-family:'Noto Sans TC',sans-serif; color:var(--text); outline:none; transition:border-color 0.15s; width:100%; }
-  select.nearby-select:focus { border-color:#1976D2; }
-  .search-btn { background:#1565C0; color:#FFF; border:none; border-radius:8px; padding:0.55rem 1.25rem; font-size:0.9rem; font-family:'Noto Sans TC',sans-serif; font-weight:700; cursor:pointer; transition:background 0.15s; align-self:flex-end; white-space:nowrap; }
-  .search-btn:hover { background:#0D47A1; }
-  .search-btn:disabled { background:#ccc; cursor:not-allowed; }
+  /* NEARBY */
   .nearby-result-item { background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:0.75rem 1rem; display:flex; align-items:center; gap:0.75rem; margin-bottom:0.5rem; }
   .nearby-result-info { flex:1; min-width:0; }
   .nearby-result-name { font-weight:700; font-size:0.92rem; }
   .nearby-result-meta { font-size:0.75rem; color:var(--muted); margin-top:0.2rem; }
   .nearby-add-btn { background:var(--tag-bg); color:var(--tag-text); border:1.5px solid var(--accent2); border-radius:8px; padding:0.3rem 0.75rem; font-size:0.82rem; font-family:'Noto Sans TC',sans-serif; font-weight:700; cursor:pointer; white-space:nowrap; transition:all 0.15s; flex-shrink:0; }
   .nearby-add-btn:hover { background:var(--accent); color:#FFF; border-color:var(--accent); }
-  .nearby-add-btn.added { background:#E8F5E9; color:#2E7D32; border-color:#A5C898; cursor:default; }
-  .nearby-loading { text-align:center; color:var(--muted); font-size:0.9rem; padding:1rem 0; }
-  .nearby-empty { text-align:center; color:var(--muted); font-size:0.85rem; padding:0.75rem 0; }
+  .nearby-add-btn.added { background:#E8F5E9; color:var(--green); border-color:var(--green-border); cursor:default; }
+  .nearby-status { text-align:center; color:var(--muted); font-size:0.88rem; padding:1rem 0; }
 
-  /* EMPTY STATE */
+  /* EMPTY */
   .empty-state { text-align:center; padding:2rem; color:var(--muted); font-size:0.9rem; background:var(--surface); border-radius:var(--radius); border:1.5px dashed var(--border); }
   .empty-state .big-emoji { font-size:3rem; display:block; margin-bottom:0.5rem; }
 
@@ -158,187 +171,307 @@
       <span class="bowl-icon" id="bowlIcon">🎲</span>
       <span class="bowl-text" id="bowlText">按下抽籤</span>
     </div>
+
+    <!-- MODE BAR -->
+    <div class="mode-bar" style="justify-content:center;">
+      <span class="mode-label">抽籤模式：</span>
+      <select class="mode-select" id="modeSelect" onchange="onModeChange()">
+        <option value="region">🗂 區域最愛</option>
+        <option value="nearby">📍 搜尋附近</option>
+      </select>
+      <select class="region-select" id="regionSelect" onchange="renderList()">
+        <option value="all">全部區域</option>
+      </select>
+    </div>
+
     <button class="spin-btn" id="spinBtn" onclick="spin()">✨ 開始抽籤！</button>
-    <p class="empty-hint" id="emptyHint" style="display:none;">請先新增至少一家店家</p>
+    <p class="empty-hint" id="emptyHint" style="display:none;"></p>
   </div>
 
-  <!-- FILTER -->
-  <div class="filter-bar" id="filterBar">
-    <span class="filter-label">篩選：</span>
-    <button class="tag-filter-btn active" onclick="filterTag(this,'all')">全部</button>
+  <!-- FILTER (region mode only) -->
+  <div id="filterBarWrap">
+    <div class="filter-bar" id="filterBar">
+      <span class="filter-label">標籤篩選：</span>
+      <button class="tag-filter-btn active" onclick="filterTag(this,'all')">全部</button>
+    </div>
   </div>
 
-  <!-- ADD FORM -->
-  <div class="add-card" id="addCard">
-    <div class="add-card-title" id="formTitle">＋ 新增店家</div>
-    <input type="hidden" id="editId" value="">
-    <div class="form-row">
-      <div class="form-group" style="flex:2;">
-        <label>店家名稱 *</label>
-        <input type="text" id="inputName" placeholder="例：麥當勞、自助餐" maxlength="30">
-      </div>
-      <div class="form-group" style="flex:1; min-width:120px;">
-        <label>圖示</label>
-        <div class="emoji-field">
-          <div class="emoji-trigger" id="emojiTrigger" onclick="toggleEmojiPicker()">
-            <span class="selected-emoji" id="selectedEmoji">🍴</span>
-            <span class="trigger-hint">點選更換</span>
+  <!-- ADD FORM (region mode only) -->
+  <div id="addCardWrap">
+    <div class="card dashed-orange">
+      <div class="card-title orange" id="formTitle">＋ 新增店家</div>
+      <input type="hidden" id="editId">
+      <div class="form-row">
+        <div class="form-group" style="flex:2;">
+          <label>店家名稱 *</label>
+          <input type="text" id="inputName" placeholder="例：麥當勞、自助餐" maxlength="30">
+        </div>
+        <div class="form-group" style="flex:1;min-width:110px;">
+          <label>圖示</label>
+          <div class="emoji-field">
+            <div class="emoji-trigger" id="emojiTrigger" onclick="toggleEmojiPicker()">
+              <span class="selected-emoji" id="selectedEmoji">🍴</span>
+              <span class="trigger-hint">點選更換</span>
+            </div>
+            <div class="emoji-picker-popup" id="emojiPicker"></div>
           </div>
-          <div class="emoji-picker-popup" id="emojiPicker"></div>
         </div>
       </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>類型標籤</label>
-        <input type="text" id="inputTag" placeholder="例：日式、快餐、素食">
+      <div class="form-row">
+        <div class="form-group">
+          <label>類型標籤</label>
+          <input type="text" id="inputTag" placeholder="例：日式、快餐">
+        </div>
+        <div class="form-group">
+          <label>備註</label>
+          <input type="text" id="inputNote" placeholder="例：走路5分鐘" maxlength="30">
+        </div>
+        <div class="form-group" style="min-width:130px;">
+          <label>歸屬區域</label>
+          <select class="form-select" id="inputRegion">
+            <option value="">無區域</option>
+          </select>
+        </div>
       </div>
-      <div class="form-group">
-        <label>備註</label>
-        <input type="text" id="inputNote" placeholder="例：走路5分鐘" maxlength="30">
+      <div class="form-row" style="justify-content:flex-end;margin-bottom:0;">
+        <button class="btn btn-ghost" id="cancelBtn" onclick="cancelEdit()" style="display:none;">取消</button>
+        <button class="btn btn-orange" id="submitBtn" onclick="submitForm()">新增</button>
       </div>
     </div>
-    <div class="form-row" style="justify-content:flex-end; margin-bottom:0;">
-      <button class="cancel-btn" id="cancelBtn" onclick="cancelEdit()" style="display:none;">取消</button>
-      <button class="add-btn" id="submitBtn" onclick="submitForm()">新增</button>
+
+    <!-- REGION MANAGER -->
+    <div class="card dashed-orange" style="border-color:var(--border);">
+      <div class="card-title orange" style="color:var(--muted);font-size:0.88rem;">🗂 管理區域</div>
+      <div class="form-row" style="margin-bottom:0;">
+        <div class="form-group">
+          <input type="text" id="newRegionName" placeholder="輸入新區域名稱，例：新竹市東區" maxlength="20">
+        </div>
+        <button class="btn btn-ghost" style="align-self:flex-end;" onclick="addRegion()">新增區域</button>
+      </div>
+      <div id="regionList" style="margin-top:0.75rem;display:flex;flex-wrap:wrap;gap:0.4rem;"></div>
     </div>
   </div>
-
 
   <!-- NEARBY SEARCH -->
-  <div class="nearby-card">
-    <div class="nearby-card-title">📍 搜尋附近餐廳</div>
-    <div class="form-row">
-      <div class="form-group" style="flex:2;">
-        <label>地點名稱或地區</label>
-        <input type="text" id="nearbyAddress" placeholder="例：新竹市東區、竹蓮市場、清大">
+  <div id="nearbyCardWrap" style="display:none;">
+    <div class="card dashed-blue">
+      <div class="card-title blue">📍 搜尋附近餐廳</div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;">
+          <label>地點名稱或地區</label>
+          <input type="text" id="nearbyAddress" placeholder="例：新竹市東區、竹蓮市場、清華大學">
+        </div>
+        <div class="form-group" style="flex:1;min-width:110px;">
+          <label>搜尋距離</label>
+          <select class="form-select" id="nearbyRadius">
+            <option value="300">300 公尺</option>
+            <option value="500" selected>500 公尺</option>
+            <option value="1000">1 公里</option>
+            <option value="1500">1.5 公里</option>
+            <option value="2000">2 公里</option>
+          </select>
+        </div>
       </div>
-      <div class="form-group" style="flex:1; min-width:110px;">
-        <label>搜尋距離</label>
-        <select id="nearbyRadius" class="nearby-select">
-          <option value="300">300 公尺</option>
-          <option value="500" selected>500 公尺</option>
-          <option value="1000">1 公里</option>
-          <option value="1500">1.5 公里</option>
-          <option value="2000">2 公里</option>
-        </select>
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6;">
+        💡 建議輸入<strong>地區名、地標、學校、車站</strong>，避免輸入完整門牌
       </div>
+      <div class="form-row" style="justify-content:flex-end;margin-bottom:0.75rem;">
+        <button class="btn btn-blue" id="nearbySearchBtn" onclick="searchNearby()">🔍 搜尋</button>
+      </div>
+      <div id="nearbyResults"></div>
     </div>
-    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6;">
-      💡 建議輸入<strong>地區名、地標、學校、捷運站</strong>，避免輸入完整門牌號碼效果較好
-    </div>
-    <div class="form-row" style="justify-content:flex-end; margin-bottom:0.75rem;">
-      <button class="search-btn" id="nearbySearchBtn" onclick="searchNearby()">🔍 搜尋</button>
-    </div>
-    <div id="nearbyResults"></div>
   </div>
 
-  <!-- LIST -->
-  <div class="section-title">
-    店家清單 <span class="count-badge" id="countBadge">0</span>
+  <!-- LIST (region mode) -->
+  <div id="listWrap">
+    <div class="section-title">
+      店家清單 <span class="count-badge" id="countBadge">0</span>
+    </div>
+    <div class="io-bar">
+      <button class="io-btn export" onclick="exportExcel()">📥 匯出 Excel</button>
+      <button class="io-btn import" onclick="document.getElementById('importFile').click()">📤 匯入 Excel</button>
+      <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
+    </div>
+    <div class="io-hint">
+      📋 <strong>匯出</strong>：存成 .xlsx，欄位為「名稱、圖示、標籤、備註、區域」。<br>
+      📂 <strong>匯入</strong>：同格式匯入，會<strong>取代</strong>現有清單。
+    </div>
+    <div class="restaurant-list" id="restaurantList"></div>
   </div>
-  <div class="io-bar">
-    <button class="io-btn export" onclick="exportExcel()">📥 匯出 Excel</button>
-    <button class="io-btn import" onclick="document.getElementById('importFile').click()">📤 匯入 Excel</button>
-    <input type="file" id="importFile" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
-  </div>
-  <div class="io-hint">
-    📋 <strong>匯出</strong>：把目前所有店家存成 <code>.xlsx</code> 檔，可用 Excel 編輯後再匯回。<br>
-    📂 <strong>匯入</strong>：欄位依序為「名稱、圖示、標籤、備註」，匯入後會<strong>取代</strong>現有清單。
-  </div>
-  <div class="restaurant-list" id="restaurantList"></div>
 
 </div>
-
 <div id="toast"></div>
 
 <script>
-// ── Emoji 分類資料 ──
+// ── Emoji ──
 const EMOJI_CATEGORIES = [
-  { label: '米飯麵食', emojis: ['🍱','🍜','🍝','🍛','🍚','🥘','🫕','🍲','🥗','🫔','🌯','🥙'] },
-  { label: '肉類燒烤', emojis: ['🍖','🍗','🥩','🥓','🌭','🍔','🍟'] },
-  { label: '海鮮日式', emojis: ['🍣','🍱','🦐','🦑','🦞','🦀','🐟','🍤'] },
-  { label: '小吃點心', emojis: ['🧆','🥚','🧇','🥞','🧈','🥐','🥖','🫓','🥨','🧀','🥗'] },
-  { label: '飲料甜食', emojis: ['🧋','☕','🍵','🥤','🧃','🍰','🎂','🍩','🍪','🍦','🧁'] },
-  { label: '蔬食健康', emojis: ['🥗','🥦','🥕','🌽','🍅','🥑','🫑','🧄','🧅'] },
-  { label: '店家場所', emojis: ['🏪','🏬','🍽️','🥡','🛵','🏠','🏢'] },
+  { label:'米飯麵食', emojis:['🍱','🍜','🍝','🍛','🍚','🥘','🫕','🍲','🥗','🫔','🌯','🥙'] },
+  { label:'肉類燒烤', emojis:['🍖','🍗','🥩','🥓','🌭','🍔','🍟'] },
+  { label:'海鮮日式', emojis:['🍣','🦐','🦑','🦞','🦀','🐟','🍤'] },
+  { label:'小吃點心', emojis:['🧆','🥚','🧇','🥞','🥐','🥖','🫓','🧀'] },
+  { label:'飲料甜食', emojis:['🧋','☕','🍵','🥤','🍰','🎂','🍩','🍪','🍦','🧁'] },
+  { label:'蔬食健康', emojis:['🥗','🥦','🥕','🌽','🍅','🥑','🫑'] },
+  { label:'店家場所', emojis:['🏪','🏬','🍽️','🥡','🛵','🏠','🏢'] },
 ];
-
 const DEFAULT_EMOJI = '🍴';
 let selectedEmojiValue = DEFAULT_EMOJI;
 
 function buildEmojiPicker() {
-  const picker = document.getElementById('emojiPicker');
-  picker.innerHTML = EMOJI_CATEGORIES.map(cat => `
+  document.getElementById('emojiPicker').innerHTML = EMOJI_CATEGORIES.map(cat => `
     <div class="emoji-category-label">${cat.label}</div>
-    <div class="emoji-grid">
-      ${cat.emojis.map(e => `<button class="emoji-opt" onclick="pickEmoji('${e}')">${e}</button>`).join('')}
-    </div>
+    <div class="emoji-grid">${cat.emojis.map(e=>`<button class="emoji-opt" onclick="pickEmoji('${e}')">${e}</button>`).join('')}</div>
   `).join('');
 }
-
-function toggleEmojiPicker() {
-  const picker = document.getElementById('emojiPicker');
-  picker.classList.toggle('open');
-}
-
+function toggleEmojiPicker() { document.getElementById('emojiPicker').classList.toggle('open'); }
 function pickEmoji(emoji) {
   selectedEmojiValue = emoji;
   document.getElementById('selectedEmoji').textContent = emoji;
   document.getElementById('emojiPicker').classList.remove('open');
-  // highlight selected
-  document.querySelectorAll('.emoji-opt').forEach(btn => {
-    btn.classList.toggle('selected', btn.textContent === emoji);
-  });
+  document.querySelectorAll('.emoji-opt').forEach(b => b.classList.toggle('selected', b.textContent === emoji));
 }
-
-// close picker when clicking outside
 document.addEventListener('click', e => {
-  const field = document.getElementById('emojiTrigger');
-  const picker = document.getElementById('emojiPicker');
-  if (!field.contains(e.target) && !picker.contains(e.target)) {
-    picker.classList.remove('open');
-  }
+  if (!document.getElementById('emojiTrigger').contains(e.target) &&
+      !document.getElementById('emojiPicker').contains(e.target))
+    document.getElementById('emojiPicker').classList.remove('open');
 });
 
 // ── Data ──
 const FOOD_EMOJIS = ['🍜','🍱','🍛','🍝','🥗','🌮','🍔','🍣','🥘','🍲','🥩','🍗','🍖','🫕','🌯','🥙'];
 let restaurants = JSON.parse(localStorage.getItem('lunch_restaurants') || '[]');
-let activeTag = 'all';
-let spinning = false;
+let regions     = JSON.parse(localStorage.getItem('lunch_regions') || '[]');
+let activeTag   = 'all';
+let spinning    = false;
 let lastChosenId = null;
+let currentMode = 'region'; // 'region' | 'nearby'
+let nearbyPool  = []; // 當次搜尋結果，供抽籤用
 
 if (restaurants.length === 0) {
   restaurants = [
-    { id: 1, name: '便利商店', emoji: '🏪', tag: '快餐', note: '最近最方便' },
-    { id: 2, name: '自助餐',   emoji: '🍱', tag: '台式', note: 'CP值高' },
-    { id: 3, name: '拉麵店',   emoji: '🍜', tag: '日式', note: '走路10分鐘' },
-    { id: 4, name: '鹹酥雞',   emoji: '🍗', tag: '台式', note: '下午才開' },
-    { id: 5, name: '沙拉輕食', emoji: '🥗', tag: '健康', note: '減肥首選' },
+    { id:1, name:'便利商店', emoji:'🏪', tag:'快餐', note:'最近最方便', region:'' },
+    { id:2, name:'自助餐',   emoji:'🍱', tag:'台式', note:'CP值高',     region:'' },
+    { id:3, name:'拉麵店',   emoji:'🍜', tag:'日式', note:'走路10分鐘', region:'' },
+    { id:4, name:'鹹酥雞',   emoji:'🍗', tag:'台式', note:'下午才開',   region:'' },
+    { id:5, name:'沙拉輕食', emoji:'🥗', tag:'健康', note:'減肥首選',   region:'' },
   ];
   save();
 }
 
-function save() { localStorage.setItem('lunch_restaurants', JSON.stringify(restaurants)); }
-function getFiltered() { return activeTag === 'all' ? restaurants : restaurants.filter(r => r.tag === activeTag); }
-function getAllTags() { return [...new Set(restaurants.map(r => r.tag).filter(Boolean))]; }
+function save() {
+  localStorage.setItem('lunch_restaurants', JSON.stringify(restaurants));
+  localStorage.setItem('lunch_regions', JSON.stringify(regions));
+}
 
-// ── Render ──
-function render() {
-  const list = document.getElementById('restaurantList');
-  const filtered = getFiltered();
+// ── Region helpers ──
+function addRegion() {
+  const name = document.getElementById('newRegionName').value.trim();
+  if (!name) { showToast('請輸入區域名稱！'); return; }
+  if (regions.includes(name)) { showToast('區域已存在！'); return; }
+  regions.push(name);
+  save();
+  document.getElementById('newRegionName').value = '';
+  renderRegions();
+  showToast(`✅ 已新增區域「${name}」`);
+}
+function deleteRegion(name) {
+  if (!confirm(`刪除區域「${name}」？（店家不會被刪除，只是移除區域標記）`)) return;
+  regions = regions.filter(r => r !== name);
+  restaurants.forEach(r => { if (r.region === name) r.region = ''; });
+  save();
+  renderRegions();
+  renderRegionSelects();
+  renderList();
+  showToast(`已刪除區域「${name}」`);
+}
+function renderRegions() {
+  const el = document.getElementById('regionList');
+  if (regions.length === 0) {
+    el.innerHTML = '<span style="font-size:0.78rem;color:var(--muted);">尚無區域，新增後可在店家歸屬區域選擇</span>';
+    return;
+  }
+  el.innerHTML = regions.map(r => `
+    <span style="display:inline-flex;align-items:center;gap:0.3rem;background:var(--blue-light);border:1px solid var(--blue-border);border-radius:50px;padding:0.2rem 0.65rem;font-size:0.8rem;color:var(--blue);">
+      ${escHtml(r)}
+      <button onclick="deleteRegion('${escHtml(r)}')" style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:0.85rem;padding:0;line-height:1;">✕</button>
+    </span>`).join('');
+}
+function renderRegionSelects() {
+  // 新增表單的區域選單
+  const inputRegion = document.getElementById('inputRegion');
+  const cur = inputRegion.value;
+  inputRegion.innerHTML = '<option value="">無區域</option>' +
+    regions.map(r => `<option value="${escHtml(r)}" ${cur===r?'selected':''}>${escHtml(r)}</option>`).join('');
+
+  // 抽籤模式的區域選單
+  const regionSelect = document.getElementById('regionSelect');
+  const curR = regionSelect.value;
+  regionSelect.innerHTML = '<option value="all">全部區域</option>' +
+    regions.map(r => `<option value="${escHtml(r)}" ${curR===r?'selected':''}>${escHtml(r)}</option>`).join('');
+}
+
+// ── Mode ──
+function onModeChange() {
+  currentMode = document.getElementById('modeSelect').value;
+  const isRegion = currentMode === 'region';
+  document.getElementById('filterBarWrap').style.display  = isRegion ? '' : 'none';
+  document.getElementById('addCardWrap').style.display    = isRegion ? '' : 'none';
+  document.getElementById('nearbyCardWrap').style.display = isRegion ? 'none' : '';
+  document.getElementById('listWrap').style.display       = isRegion ? '' : 'none';
+  document.getElementById('regionSelect').style.display   = isRegion ? '' : 'none';
+  nearbyPool = [];
+  document.getElementById('nearbyResults').innerHTML = '';
+  updateSpinState();
+}
+
+function getSpinPool() {
+  if (currentMode === 'nearby') return nearbyPool;
+  const selRegion = document.getElementById('regionSelect').value;
+  let pool = restaurants;
+  if (selRegion !== 'all') pool = pool.filter(r => r.region === selRegion);
+  if (activeTag !== 'all') pool = pool.filter(r => r.tag === activeTag);
+  return pool;
+}
+
+function updateSpinState() {
+  const pool = getSpinPool();
+  const spinBtn = document.getElementById('spinBtn');
+  const hint = document.getElementById('emptyHint');
+  if (currentMode === 'nearby' && nearbyPool.length === 0) {
+    spinBtn.disabled = true;
+    hint.style.display = 'block';
+    hint.textContent = '請先搜尋附近餐廳';
+  } else if (pool.length === 0) {
+    spinBtn.disabled = true;
+    hint.style.display = 'block';
+    hint.textContent = '此區域沒有店家';
+  } else {
+    spinBtn.disabled = false;
+    hint.style.display = 'none';
+  }
+}
+
+// ── Render list ──
+function renderList() {
+  if (currentMode === 'nearby') { updateSpinState(); return; }
+  const selRegion = document.getElementById('regionSelect').value;
+  let filtered = restaurants;
+  if (selRegion !== 'all') filtered = filtered.filter(r => r.region === selRegion);
+  if (activeTag !== 'all') filtered = filtered.filter(r => r.tag === activeTag);
+
   document.getElementById('countBadge').textContent = filtered.length;
+  const list = document.getElementById('restaurantList');
 
-  list.innerHTML = filtered.length === 0
-    ? `<div class="empty-state"><span class="big-emoji">🍽️</span>${activeTag === 'all' ? '還沒有店家，快新增一家吧！' : `「${activeTag}」分類下沒有店家`}</div>`
-    : filtered.map(r => `
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><span class="big-emoji">🍽️</span>這裡還沒有店家</div>`;
+  } else {
+    list.innerHTML = filtered.map(r => `
       <div class="restaurant-item" id="item-${r.id}">
-        <div class="rest-emoji">${r.emoji || '🍴'}</div>
+        <div class="rest-emoji">${r.emoji||'🍴'}</div>
         <div class="rest-info">
           <div class="rest-name">${escHtml(r.name)}</div>
           <div class="rest-meta">
-            ${r.tag  ? `<span class="tag-pill">${escHtml(r.tag)}</span>` : ''}
-            ${r.note ? `<span class="rest-note">${escHtml(r.note)}</span>` : ''}
+            ${r.region ? `<span class="region-pill">📍${escHtml(r.region)}</span>` : ''}
+            ${r.tag    ? `<span class="tag-pill">${escHtml(r.tag)}</span>` : ''}
+            ${r.note   ? `<span class="rest-note">${escHtml(r.note)}</span>` : ''}
           </div>
         </div>
         <div class="rest-actions">
@@ -346,66 +479,64 @@ function render() {
           <button class="icon-btn delete" onclick="deleteRestaurant(${r.id})" title="刪除">🗑</button>
         </div>
       </div>`).join('');
-
+  }
   renderFilterBar();
-  const empty = restaurants.length === 0;
-  document.getElementById('spinBtn').disabled = empty;
-  document.getElementById('emptyHint').style.display = empty ? 'block' : 'none';
+  renderRegionSelects();
+  updateSpinState();
 }
 
 function renderFilterBar() {
-  const bar = document.getElementById('filterBar');
-  const tags = getAllTags();
-  bar.innerHTML = `<span class="filter-label">篩選：</span>
+  const tags = [...new Set(restaurants.map(r=>r.tag).filter(Boolean))];
+  document.getElementById('filterBar').innerHTML = `
+    <span class="filter-label">標籤篩選：</span>
     <button class="tag-filter-btn ${activeTag==='all'?'active':''}" onclick="filterTag(this,'all')">全部</button>
     ${tags.map(t=>`<button class="tag-filter-btn ${activeTag===t?'active':''}" onclick="filterTag(this,'${escHtml(t)}')">${escHtml(t)}</button>`).join('')}`;
 }
 
-function filterTag(btn, tag) { activeTag = tag; render(); }
+function filterTag(btn, tag) { activeTag = tag; renderList(); }
 
 // ── Add / Edit ──
 function submitForm() {
   const name = document.getElementById('inputName').value.trim();
   if (!name) { showToast('請輸入店家名稱！'); document.getElementById('inputName').focus(); return; }
-  const emoji = selectedEmojiValue || DEFAULT_EMOJI;
-  const tag   = document.getElementById('inputTag').value.trim();
-  const note  = document.getElementById('inputNote').value.trim();
+  const emoji  = selectedEmojiValue || DEFAULT_EMOJI;
+  const tag    = document.getElementById('inputTag').value.trim();
+  const note   = document.getElementById('inputNote').value.trim();
+  const region = document.getElementById('inputRegion').value;
   const editId = document.getElementById('editId').value;
 
   if (editId) {
-    // 編輯模式
     const idx = restaurants.findIndex(r => r.id == editId);
-    if (idx !== -1) restaurants[idx] = { id: restaurants[idx].id, name, emoji, tag, note };
+    if (idx !== -1) restaurants[idx] = { id:restaurants[idx].id, name, emoji, tag, note, region };
     showToast(`✅ 已更新「${name}」！`);
   } else {
-    // 新增模式
-    restaurants.push({ id: Date.now(), name, emoji, tag, note });
+    restaurants.push({ id:Date.now(), name, emoji, tag, note, region });
     showToast(`✅ 已新增「${name}」！`);
   }
-  save();
-  resetForm();
-  render();
+  save(); resetForm(); renderList();
 }
 
 function startEdit(id) {
   const r = restaurants.find(r => r.id === id);
   if (!r) return;
-  document.getElementById('editId').value = id;
+  document.getElementById('editId').value    = id;
   document.getElementById('inputName').value = r.name;
   document.getElementById('inputTag').value  = r.tag  || '';
   document.getElementById('inputNote').value = r.note || '';
+  renderRegionSelects();
+  document.getElementById('inputRegion').value = r.region || '';
   pickEmoji(r.emoji || DEFAULT_EMOJI);
   document.getElementById('formTitle').textContent = '✏️ 編輯店家';
   document.getElementById('submitBtn').textContent = '儲存';
   document.getElementById('cancelBtn').style.display = 'block';
-  document.getElementById('addCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  document.getElementById('addCardWrap').scrollIntoView({ behavior:'smooth', block:'nearest' });
   document.getElementById('inputName').focus();
 }
 
 function cancelEdit() { resetForm(); }
 
 function resetForm() {
-  document.getElementById('editId').value = '';
+  document.getElementById('editId').value    = '';
   document.getElementById('inputName').value = '';
   document.getElementById('inputTag').value  = '';
   document.getElementById('inputNote').value = '';
@@ -419,7 +550,7 @@ function deleteRestaurant(id) {
   const r = restaurants.find(r => r.id === id);
   restaurants = restaurants.filter(r => r.id !== id);
   if (document.getElementById('editId').value == id) resetForm();
-  save(); render();
+  save(); renderList();
   if (r) showToast(`已刪除「${r.name}」`);
 }
 
@@ -427,11 +558,11 @@ function deleteRestaurant(id) {
 function exportExcel() {
   if (restaurants.length === 0) { showToast('目前沒有店家可以匯出！'); return; }
   const data = [
-    ['名稱','圖示','標籤','備註'],
-    ...restaurants.map(r => [r.name, r.emoji||'', r.tag||'', r.note||''])
+    ['名稱','圖示','標籤','備註','區域'],
+    ...restaurants.map(r => [r.name, r.emoji||'', r.tag||'', r.note||'', r.region||''])
   ];
   const ws = XLSX.utils.aoa_to_sheet(data);
-  ws['!cols'] = [{wch:20},{wch:6},{wch:12},{wch:20}];
+  ws['!cols'] = [{wch:20},{wch:6},{wch:12},{wch:20},{wch:15}];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '午餐店家');
   XLSX.writeFile(wb, '午餐店家清單.xlsx');
@@ -448,23 +579,28 @@ function importExcel(event) {
       const ws = wb.Sheets[wb.SheetNames[0]];
       const rows = XLSX.utils.sheet_to_json(ws, { header:1 });
       const imported = [];
+      const importedRegions = new Set(regions);
       for (let i = 1; i < rows.length; i++) {
         const row = rows[i];
         const name = (row[0]||'').toString().trim();
         if (!name) continue;
+        const region = (row[4]||'').toString().trim();
+        if (region) importedRegions.add(region);
         imported.push({
           id: Date.now() + i,
           name,
           emoji: (row[1]||'').toString().trim() || FOOD_EMOJIS[Math.floor(Math.random()*FOOD_EMOJIS.length)],
-          tag:  (row[2]||'').toString().trim(),
-          note: (row[3]||'').toString().trim(),
+          tag:   (row[2]||'').toString().trim(),
+          note:  (row[3]||'').toString().trim(),
+          region,
         });
       }
       if (imported.length === 0) { showToast('⚠️ 沒有讀到有效資料！'); return; }
       if (!confirm(`即將匯入 ${imported.length} 家店家，並取代目前清單，確定嗎？`)) return;
       restaurants = imported;
+      regions = [...importedRegions];
       activeTag = 'all';
-      save(); render();
+      save(); renderRegions(); renderList();
       showToast(`📂 已匯入 ${imported.length} 家店家！`);
     } catch(err) { showToast('⚠️ 讀取失敗，請確認是有效的 Excel 檔！'); }
   };
@@ -472,11 +608,138 @@ function importExcel(event) {
   event.target.value = '';
 }
 
+// ── Nearby Search ──
+const CUISINE_EMOJI_MAP = {
+  'restaurant':'🍽️','fast_food':'🍔','cafe':'☕','bar':'🍺',
+  'bakery':'🥐','meal_takeaway':'🥡','chinese':'🍜','japanese':'🍱',
+  'ramen':'🍜','sushi':'🍣','pizza':'🍕','burger':'🍔','bbq':'🥩',
+  'vegetarian':'🥗','dessert':'🍰','ice_cream':'🍦',
+};
+function getEmojiForPlace(tags) {
+  if (!tags) return '🍽️';
+  const t = tags.toLowerCase();
+  for (const [key, emoji] of Object.entries(CUISINE_EMOJI_MAP)) { if (t.includes(key)) return emoji; }
+  return '🍽️';
+}
+async function geocodeAddress(address) {
+  const cleaned = address.replace(/^臺灣省?\s*/,'').replace(/^台灣省?\s*/,'').replace(/臺/g,'台');
+  const noNumber = cleaned.replace(/\d+號.*$/,'').trim();
+  const queries = [cleaned+', Taiwan', noNumber+', Taiwan', cleaned, address+', Taiwan', address]
+    .filter((v,i,a) => v.trim() && a.indexOf(v)===i);
+  for (const q of queries) {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=tw&accept-language=zh-TW`,
+        { headers:{'Accept-Language':'zh-TW,zh;q=0.9'} });
+      const data = await res.json();
+      if (data && data.length > 0) return { lat:parseFloat(data[0].lat), lon:parseFloat(data[0].lon) };
+    } catch(e) { continue; }
+  }
+  return null;
+}
+async function fetchNearbyRestaurants(lat, lon, radius) {
+  const query = `[out:json][timeout:15];(node["amenity"~"restaurant|fast_food|cafe|bar|food_court"](around:${radius},${lat},${lon});way["amenity"~"restaurant|fast_food|cafe|bar|food_court"](around:${radius},${lat},${lon}););out center tags 30;`;
+  const res = await fetch('https://overpass-api.de/api/interpreter', { method:'POST', body:query });
+  return (await res.json()).elements || [];
+}
+function calcDistance(lat1,lon1,lat2,lon2) {
+  const R=6371000, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+}
+
+let nearbySearchResults = [];
+let lastSearchLocation = '';
+
+async function searchNearby() {
+  const address = document.getElementById('nearbyAddress').value.trim();
+  if (!address) { showToast('請輸入地點！'); return; }
+  const radius = parseInt(document.getElementById('nearbyRadius').value);
+  const resultsDiv = document.getElementById('nearbyResults');
+  const btn = document.getElementById('nearbySearchBtn');
+  btn.disabled = true; btn.textContent = '搜尋中…';
+  resultsDiv.innerHTML = '<div class="nearby-status">🔍 定位中，請稍候…</div>';
+
+  try {
+    const coord = await geocodeAddress(address);
+    if (!coord) {
+      resultsDiv.innerHTML = `<div class="nearby-status">⚠️ 找不到此地點，建議改用地區名稱、地標或學校名稱</div>`;
+      nearbyPool = []; updateSpinState(); return;
+    }
+    resultsDiv.innerHTML = '<div class="nearby-status">📡 搜尋附近餐廳中…</div>';
+    const places = await fetchNearbyRestaurants(coord.lat, coord.lon, radius);
+    if (places.length === 0) {
+      resultsDiv.innerHTML = '<div class="nearby-status">😅 附近沒有找到餐廳，試試拉大搜尋距離</div>';
+      nearbyPool = []; updateSpinState(); return;
+    }
+
+    lastSearchLocation = address;
+    nearbySearchResults = places
+      .filter(p => p.tags && p.tags.name)
+      .map(p => {
+        const lat2 = p.lat || p.center?.lat, lon2 = p.lon || p.center?.lon;
+        const dist = (lat2&&lon2) ? calcDistance(coord.lat,coord.lon,lat2,lon2) : null;
+        const cuisine = p.tags.cuisine || p.tags.amenity || '';
+        return { osm_id:p.id, name:p.tags.name, emoji:getEmojiForPlace(cuisine+' '+(p.tags.amenity||'')), cuisine, dist };
+      })
+      .filter(p => p.dist !== null)
+      .sort((a,b) => a.dist-b.dist)
+      .slice(0, 20);
+
+    // 設定 nearbyPool 供抽籤用
+    nearbyPool = nearbySearchResults.map(p => ({ id:'nearby_'+p.osm_id, name:p.name, emoji:p.emoji, tag:p.cuisine||'', note:p.dist?`距離${p.dist}公尺`:'' }));
+    renderNearbyResults();
+    updateSpinState();
+  } catch(err) {
+    resultsDiv.innerHTML = '<div class="nearby-status">⚠️ 搜尋失敗，請確認網路連線後再試</div>';
+    nearbyPool = []; updateSpinState();
+  } finally {
+    btn.disabled = false; btn.textContent = '🔍 搜尋';
+  }
+}
+
+function renderNearbyResults() {
+  const resultsDiv = document.getElementById('nearbyResults');
+  const existingNames = new Set(restaurants.map(r=>r.name));
+  if (nearbySearchResults.length === 0) { resultsDiv.innerHTML = '<div class="nearby-status">沒有找到結果</div>'; return; }
+  resultsDiv.innerHTML = `
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">
+      找到 ${nearbySearchResults.length} 家・可直接抽籤，或點「加入最愛」存入區域清單
+    </div>
+    ${nearbySearchResults.map((p,i) => {
+      const already = existingNames.has(p.name);
+      const meta = [p.dist?`${p.dist}公尺`:'', p.cuisine?p.cuisine.replace(/_/g,' '):''].filter(Boolean).join('・');
+      return `<div class="nearby-result-item">
+        <div style="font-size:1.4rem;width:2rem;text-align:center;flex-shrink:0;">${p.emoji}</div>
+        <div class="nearby-result-info">
+          <div class="nearby-result-name">${escHtml(p.name)}</div>
+          ${meta?`<div class="nearby-result-meta">${escHtml(meta)}</div>`:''}
+        </div>
+        <button class="nearby-add-btn ${already?'added':''}" id="nearby-btn-${i}"
+          onclick="addNearbyToFavorite(${i})" ${already?'disabled':''}>
+          ${already?'已加入':'＋ 加入最愛'}
+        </button>
+      </div>`;
+    }).join('')}`;
+}
+
+function addNearbyToFavorite(idx) {
+  const p = nearbySearchResults[idx];
+  if (!p) return;
+  // 以搜尋地點名稱自動建立區域
+  const regionName = lastSearchLocation;
+  if (regionName && !regions.includes(regionName)) { regions.push(regionName); save(); renderRegions(); }
+  restaurants.push({ id:Date.now(), name:p.name, emoji:p.emoji, tag:p.cuisine?p.cuisine.split(';')[0].replace(/_/g,'').trim():'附近餐廳', note:p.dist?`距離${p.dist}公尺`:'', region:regionName||'' });
+  save();
+  const btn = document.getElementById(`nearby-btn-${idx}`);
+  if (btn) { btn.textContent='已加入'; btn.classList.add('added'); btn.disabled=true; }
+  showToast(`✅ 已加入「${p.name}」到區域「${regionName}」！`);
+}
+
 // ── Spin ──
 function spin() {
   if (spinning) return;
-  const pool = getFiltered();
-  if (pool.length === 0) { showToast('沒有符合的店家！'); return; }
+  const pool = getSpinPool();
+  if (pool.length === 0) return;
   spinning = true;
   const bowl = document.getElementById('resultBowl');
   const icon = document.getElementById('bowlIcon');
@@ -484,20 +747,22 @@ function spin() {
   bowl.className = 'result-bowl spinning';
   document.getElementById('spinBtn').disabled = true;
   const pickPool = pool.length > 1 ? pool.filter(r => r.id !== lastChosenId) : pool;
-  const chosen = pickPool[Math.floor(Math.random() * pickPool.length)];
+  const chosen = pickPool[Math.floor(Math.random()*pickPool.length)];
   const interval = setInterval(() => {
-    const r = pool[Math.floor(Math.random() * pool.length)];
-    icon.textContent = r.emoji || '🍴';
+    const r = pool[Math.floor(Math.random()*pool.length)];
+    icon.textContent = r.emoji||'🍴';
     text.textContent = r.name;
     text.style.color = 'var(--muted)';
   }, 90);
   setTimeout(() => {
     clearInterval(interval);
     bowl.className = 'result-bowl result-show';
-    bowl.innerHTML = `<div class="bowl-result-name">${chosen.emoji||'🍴'}<br>${escHtml(chosen.name)}</div><div class="bowl-result-tag">${chosen.tag ? escHtml(chosen.tag) : '今日推薦'}</div>`;
-    document.querySelectorAll('.restaurant-item').forEach(el => el.classList.remove('highlight'));
-    const hl = document.getElementById('item-' + chosen.id);
-    if (hl) hl.classList.add('highlight');
+    bowl.innerHTML = `<div class="bowl-result-name">${chosen.emoji||'🍴'}<br>${escHtml(chosen.name)}</div><div class="bowl-result-tag">${chosen.tag?escHtml(chosen.tag):'今日推薦'}</div>`;
+    if (currentMode === 'region') {
+      document.querySelectorAll('.restaurant-item').forEach(el=>el.classList.remove('highlight'));
+      const hl = document.getElementById('item-'+chosen.id);
+      if (hl) hl.classList.add('highlight');
+    }
     lastChosenId = chosen.id;
     spinning = false;
     document.getElementById('spinBtn').disabled = false;
@@ -505,210 +770,24 @@ function spin() {
   }, 3000);
 }
 
-
-// ── Nearby Search ──
-const CUISINE_EMOJI_MAP = {
-  'restaurant': '🍽️', 'fast_food': '🍔', 'cafe': '☕', 'bar': '🍺',
-  'bakery': '🥐', 'meal_takeaway': '🥡', 'meal_delivery': '🛵',
-  'chinese': '🍜', 'japanese': '🍱', 'ramen': '🍜', 'sushi': '🍣',
-  'pizza': '🍕', 'burger': '🍔', 'noodle': '🍜', 'bbq': '🥩',
-  'vegetarian': '🥗', 'dessert': '🍰', 'ice_cream': '🍦',
-};
-
-function getEmojiForPlace(tags) {
-  if (!tags) return '🍽️';
-  const t = tags.toLowerCase();
-  for (const [key, emoji] of Object.entries(CUISINE_EMOJI_MAP)) {
-    if (t.includes(key)) return emoji;
-  }
-  return '🍽️';
-}
-
-async function geocodeAddress(address) {
-  // 台灣地址正規化：移除「臺灣省」「台灣省」前綴，統一繁簡
-  const cleaned = address
-    .replace(/^臺灣省?\s*/,'').replace(/^台灣省?\s*/,'')
-    .replace(/臺/g,'台');
-
-  // 嘗試多種查詢策略（包含去掉號碼的短版）
-  const noNumber = cleaned.replace(/\d+號.*$/, '').trim();
-  const queries = [
-    cleaned + ', Taiwan',
-    noNumber + ', Taiwan',
-    cleaned,
-    noNumber,
-    address + ', Taiwan',
-    address,
-  ].filter((v, i, a) => v.trim() && a.indexOf(v) === i); // 去重
-
-  for (const q of queries) {
-    try {
-      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=tw&accept-language=zh-TW`;
-      const res = await fetch(url, { headers: { 'Accept-Language': 'zh-TW,zh;q=0.9', 'User-Agent': 'LunchPicker/1.0' } });
-      const data = await res.json();
-      if (data && data.length > 0) {
-        return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display: data[0].display_name };
-      }
-    } catch(e) { continue; }
-  }
-  return null;
-}
-
-async function fetchNearbyRestaurants(lat, lon, radius) {
-  const query = `
-    [out:json][timeout:15];
-    (
-      node["amenity"~"restaurant|fast_food|cafe|bar|food_court"](around:${radius},${lat},${lon});
-      way["amenity"~"restaurant|fast_food|cafe|bar|food_court"](around:${radius},${lat},${lon});
-    );
-    out center tags 30;
-  `;
-  const res = await fetch('https://overpass-api.de/api/interpreter', {
-    method: 'POST',
-    body: query,
-  });
-  const data = await res.json();
-  return data.elements || [];
-}
-
-function calcDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2)**2;
-  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-}
-
-let nearbySearchResults = [];
-
-async function searchNearby() {
-  const address = document.getElementById('nearbyAddress').value.trim();
-  if (!address) { showToast('請輸入地址！'); return; }
-  const radius = parseInt(document.getElementById('nearbyRadius').value);
-  const resultsDiv = document.getElementById('nearbyResults');
-  const btn = document.getElementById('nearbySearchBtn');
-
-  btn.disabled = true;
-  btn.textContent = '搜尋中…';
-  resultsDiv.innerHTML = '<div class="nearby-loading">🔍 定位中，請稍候…</div>';
-
-  try {
-    const coord = await geocodeAddress(address);
-    if (!coord) {
-      resultsDiv.innerHTML = `<div class="nearby-empty">
-        ⚠️ 找不到這個地點，建議改用以下方式輸入：<br><br>
-        <span style="text-align:left;display:inline-block;line-height:2;">
-        ✅ 地區：<strong>新竹市東區</strong><br>
-        ✅ 地標：<strong>竹蓮市場</strong>、<strong>清華大學</strong><br>
-        ✅ 捷運站：<strong>新竹火車站</strong><br>
-        ❌ 避免完整門牌：臺灣省新竹市竹蓮街15號
-        </span>
-      </div>`;
-      return;
-    }
-
-    resultsDiv.innerHTML = '<div class="nearby-loading">📡 搜尋附近餐廳中…</div>';
-    const places = await fetchNearbyRestaurants(coord.lat, coord.lon, radius);
-
-    if (places.length === 0) {
-      resultsDiv.innerHTML = '<div class="nearby-empty">😅 附近沒有找到餐廳，試試拉大搜尋距離</div>';
-      return;
-    }
-
-    // 整理資料，排除沒有名稱的
-    nearbySearchResults = places
-      .filter(p => p.tags && p.tags.name)
-      .map(p => {
-        const lat2 = p.lat || p.center?.lat;
-        const lon2 = p.lon || p.center?.lon;
-        const dist = (lat2 && lon2) ? calcDistance(coord.lat, coord.lon, lat2, lon2) : null;
-        const cuisine = p.tags.cuisine || p.tags.amenity || '';
-        return {
-          osm_id: p.id,
-          name: p.tags.name,
-          emoji: getEmojiForPlace(cuisine + ' ' + (p.tags.amenity || '')),
-          cuisine,
-          dist,
-          opening_hours: p.tags.opening_hours || '',
-        };
-      })
-      .filter(p => p.dist !== null)
-      .sort((a, b) => a.dist - b.dist)
-      .slice(0, 20);
-
-    renderNearbyResults();
-
-  } catch(err) {
-    resultsDiv.innerHTML = '<div class="nearby-empty">⚠️ 搜尋失敗，請確認網路連線後再試</div>';
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '🔍 搜尋';
-  }
-}
-
-function renderNearbyResults() {
-  const resultsDiv = document.getElementById('nearbyResults');
-  const existingNames = new Set(restaurants.map(r => r.name));
-
-  if (nearbySearchResults.length === 0) {
-    resultsDiv.innerHTML = '<div class="nearby-empty">沒有找到結果</div>';
-    return;
-  }
-
-  resultsDiv.innerHTML = `
-    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:0.5rem;">找到 ${nearbySearchResults.length} 家餐廳，點「加入」可加入清單</div>
-    ${nearbySearchResults.map((p, i) => {
-      const already = existingNames.has(p.name);
-      const distText = p.dist ? `${p.dist} 公尺` : '';
-      const cuisineText = p.cuisine ? p.cuisine.replace(/_/g,' ') : '';
-      const meta = [distText, cuisineText].filter(Boolean).join('・');
-      return `
-        <div class="nearby-result-item">
-          <div style="font-size:1.4rem;width:2rem;text-align:center;flex-shrink:0;">${p.emoji}</div>
-          <div class="nearby-result-info">
-            <div class="nearby-result-name">${escHtml(p.name)}</div>
-            ${meta ? `<div class="nearby-result-meta">${escHtml(meta)}</div>` : ''}
-          </div>
-          <button class="nearby-add-btn ${already ? 'added' : ''}" id="nearby-btn-${i}"
-            onclick="addNearbyPlace(${i})" ${already ? 'disabled' : ''}>
-            ${already ? '已加入' : '＋ 加入'}
-          </button>
-        </div>`;
-    }).join('')}
-  `;
-}
-
-function addNearbyPlace(idx) {
-  const p = nearbySearchResults[idx];
-  if (!p) return;
-  restaurants.push({
-    id: Date.now(),
-    name: p.name,
-    emoji: p.emoji,
-    tag: p.cuisine ? p.cuisine.split(';')[0].replace(/_/g,'').trim() : '附近餐廳',
-    note: p.dist ? `距離 ${p.dist} 公尺` : '',
-  });
-  save(); render();
-  const btn = document.getElementById(`nearby-btn-${idx}`);
-  if (btn) { btn.textContent = '已加入'; btn.classList.add('added'); btn.disabled = true; }
-  showToast(`✅ 已加入「${p.name}」！`);
-}
-
 // ── Utils ──
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2600);
 }
 function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.getElementById('inputName').addEventListener('keydown', e => { if (e.key === 'Enter') submitForm(); });
+document.getElementById('inputName').addEventListener('keydown', e => { if(e.key==='Enter') submitForm(); });
+document.getElementById('newRegionName').addEventListener('keydown', e => { if(e.key==='Enter') addRegion(); });
 
 buildEmojiPicker();
-render();
+renderRegions();
+renderRegionSelects();
+onModeChange();
+renderList();
 </script>
 </body>
 </html>
