@@ -522,11 +522,30 @@ function getEmojiForPlace(tags) {
 }
 
 async function geocodeAddress(address) {
-  const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&limit=1&accept-language=zh-TW`;
-  const res = await fetch(url, { headers: { 'Accept-Language': 'zh-TW,zh;q=0.9' } });
-  const data = await res.json();
-  if (!data || data.length === 0) return null;
-  return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display: data[0].display_name };
+  // 台灣地址正規化：移除「臺灣省」「台灣省」前綴，統一繁簡
+  const cleaned = address
+    .replace(/^臺灣省?\s*/,'').replace(/^台灣省?\s*/,'')
+    .replace(/臺/g,'台');
+
+  // 嘗試多種查詢策略
+  const queries = [
+    cleaned + ', Taiwan',
+    cleaned,
+    address + ', Taiwan',
+    address,
+  ];
+
+  for (const q of queries) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&limit=1&countrycodes=tw&accept-language=zh-TW`;
+      const res = await fetch(url, { headers: { 'Accept-Language': 'zh-TW,zh;q=0.9', 'User-Agent': 'LunchPicker/1.0' } });
+      const data = await res.json();
+      if (data && data.length > 0) {
+        return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon), display: data[0].display_name };
+      }
+    } catch(e) { continue; }
+  }
+  return null;
 }
 
 async function fetchNearbyRestaurants(lat, lon, radius) {
