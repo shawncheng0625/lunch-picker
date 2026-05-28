@@ -210,8 +210,8 @@
     <div class="nearby-card-title">📍 搜尋附近餐廳</div>
     <div class="form-row">
       <div class="form-group" style="flex:2;">
-        <label>地址或地點名稱</label>
-        <input type="text" id="nearbyAddress" placeholder="例：新竹市東區中正路100號">
+        <label>地點名稱或地區</label>
+        <input type="text" id="nearbyAddress" placeholder="例：新竹市東區、竹蓮市場、清大">
       </div>
       <div class="form-group" style="flex:1; min-width:110px;">
         <label>搜尋距離</label>
@@ -223,6 +223,9 @@
           <option value="2000">2 公里</option>
         </select>
       </div>
+    </div>
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:0.75rem;line-height:1.6;">
+      💡 建議輸入<strong>地區名、地標、學校、捷運站</strong>，避免輸入完整門牌號碼效果較好
     </div>
     <div class="form-row" style="justify-content:flex-end; margin-bottom:0.75rem;">
       <button class="search-btn" id="nearbySearchBtn" onclick="searchNearby()">🔍 搜尋</button>
@@ -527,13 +530,16 @@ async function geocodeAddress(address) {
     .replace(/^臺灣省?\s*/,'').replace(/^台灣省?\s*/,'')
     .replace(/臺/g,'台');
 
-  // 嘗試多種查詢策略
+  // 嘗試多種查詢策略（包含去掉號碼的短版）
+  const noNumber = cleaned.replace(/\d+號.*$/, '').trim();
   const queries = [
     cleaned + ', Taiwan',
+    noNumber + ', Taiwan',
     cleaned,
+    noNumber,
     address + ', Taiwan',
     address,
-  ];
+  ].filter((v, i, a) => v.trim() && a.indexOf(v) === i); // 去重
 
   for (const q of queries) {
     try {
@@ -589,7 +595,15 @@ async function searchNearby() {
   try {
     const coord = await geocodeAddress(address);
     if (!coord) {
-      resultsDiv.innerHTML = '<div class="nearby-empty">⚠️ 找不到這個地址，請試試更詳細的地址</div>';
+      resultsDiv.innerHTML = `<div class="nearby-empty">
+        ⚠️ 找不到這個地點，建議改用以下方式輸入：<br><br>
+        <span style="text-align:left;display:inline-block;line-height:2;">
+        ✅ 地區：<strong>新竹市東區</strong><br>
+        ✅ 地標：<strong>竹蓮市場</strong>、<strong>清華大學</strong><br>
+        ✅ 捷運站：<strong>新竹火車站</strong><br>
+        ❌ 避免完整門牌：臺灣省新竹市竹蓮街15號
+        </span>
+      </div>`;
       return;
     }
 
