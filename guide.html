@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>午餐抽籤機 使用說明</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#FFF8F0; --surface:#FFFFFF; --surface2:#FFF1E0;
+    --accent:#E8500A; --accent2:#FF7B35;
+    --text:#2A1A0A; --muted:#8A6A50;
+    --border:#F0D8C0; --tag-bg:#FFE8D0; --tag-text:#C04010;
+    --blue:#1565C0; --blue-light:#EFF5FB; --blue-border:#90B8DC;
+    --green:#2E7D32; --green-light:#F1F8F1; --green-border:#A5C898;
+    --radius:14px;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { background:var(--bg); color:var(--text); font-family:'Noto Sans TC',sans-serif; min-height:100vh; line-height:1.7; }
+
+  header { background:var(--accent); padding:2rem; text-align:center; position:relative; overflow:hidden; }
+  header::before { content:''; position:absolute; top:-40px; right:-40px; width:200px; height:200px; border-radius:50%; background:rgba(255,255,255,0.07); }
+  header h1 { font-family:'Noto Serif TC',serif; font-size:2rem; font-weight:700; color:#FFF; position:relative; z-index:1; }
+  header p { color:rgba(255,255,255,0.8); margin-top:0.4rem; font-size:0.95rem; position:relative; z-index:1; }
+
+  .container { max-width:700px; margin:0 auto; padding:2rem 1.25rem 4rem; }
+
+  /* NAV */
+  .toc { background:var(--surface); border:1.5px solid var(--border); border-radius:var(--radius); padding:1.25rem 1.5rem; margin-bottom:2rem; }
+  .toc-title { font-family:'Noto Serif TC',serif; font-weight:700; font-size:1rem; color:var(--accent); margin-bottom:0.75rem; }
+  .toc a { display:block; font-size:0.88rem; color:var(--blue); text-decoration:none; padding:0.2rem 0; }
+  .toc a:hover { color:var(--accent); }
+
+  /* SECTION */
+  .section { margin-bottom:2.5rem; }
+  .section-header { display:flex; align-items:center; gap:0.65rem; margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:2px solid var(--tag-bg); }
+  .section-icon { font-size:1.5rem; }
+  .section-title { font-family:'Noto Serif TC',serif; font-size:1.2rem; font-weight:700; color:var(--accent); }
+  .section-num { background:var(--accent); color:#FFF; font-size:0.75rem; font-weight:700; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+  /* STEPS */
+  .steps { display:flex; flex-direction:column; gap:0.75rem; }
+  .step { display:flex; gap:0.85rem; align-items:flex-start; background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:0.9rem 1rem; }
+  .step-num { background:var(--tag-bg); color:var(--tag-text); font-size:0.8rem; font-weight:700; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:0.1rem; }
+  .step-content { flex:1; font-size:0.9rem; }
+  .step-content strong { color:var(--accent); }
+
+  /* TIP BOX */
+  .tip { background:var(--surface2); border-left:3px solid var(--accent2); border-radius:0 8px 8px 0; padding:0.75rem 1rem; font-size:0.85rem; color:var(--muted); margin-top:0.75rem; line-height:1.7; }
+  .tip strong { color:var(--text); }
+
+  /* INFO BOX */
+  .info { background:var(--blue-light); border-left:3px solid var(--blue-border); border-radius:0 8px 8px 0; padding:0.75rem 1rem; font-size:0.85rem; color:var(--blue); margin-top:0.75rem; line-height:1.7; }
+
+  /* TABLE */
+  .table-wrap { overflow-x:auto; margin-top:0.75rem; }
+  table { width:100%; border-collapse:collapse; font-size:0.88rem; }
+  th { background:var(--tag-bg); color:var(--tag-text); padding:0.55rem 0.85rem; text-align:left; font-weight:700; }
+  td { padding:0.55rem 0.85rem; border-bottom:1px solid var(--border); vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  td:first-child { font-weight:500; white-space:nowrap; }
+
+  /* BADGE */
+  .badge { display:inline-block; border-radius:50px; padding:0.15rem 0.6rem; font-size:0.75rem; font-weight:700; }
+  .badge-orange { background:var(--tag-bg); color:var(--tag-text); }
+  .badge-blue { background:var(--blue-light); color:var(--blue); border:1px solid var(--blue-border); }
+  .badge-green { background:var(--green-light); color:var(--green); border:1px solid var(--green-border); }
+
+  /* BACK BTN */
+  .back-btn { display:inline-flex; align-items:center; gap:0.4rem; background:var(--accent); color:#FFF; text-decoration:none; border-radius:50px; padding:0.6rem 1.5rem; font-size:0.9rem; font-weight:700; margin-top:1rem; transition:background 0.15s; }
+  .back-btn:hover { background:#C83A00; }
+
+  @media(max-width:480px) {
+    header h1 { font-size:1.5rem; }
+    .container { padding:1.25rem 0.9rem 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🍱 午餐抽籤機</h1>
+  <p>使用說明</p>
+</header>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <div class="toc-title">📋 目錄</div>
+    <a href="#sec1">① 快速開始 — 抽籤</a>
+    <a href="#sec2">② 新增與編輯店家</a>
+    <a href="#sec3">③ 區域管理</a>
+    <a href="#sec4">④ 搜尋附近餐廳</a>
+    <a href="#sec5">⑤ 匯出與匯入 Excel</a>
+    <a href="#sec6">⑥ 標籤篩選</a>
+    <a href="#sec7">⑦ 常見問題</a>
+  </div>
+
+  <!-- SEC 1 -->
+  <div class="section" id="sec1">
+    <div class="section-header">
+      <span class="section-icon">🎲</span>
+      <span class="section-title">快速開始 — 抽籤</span>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">選擇<strong>抽籤模式</strong>：<span class="badge badge-orange">🗂 區域最愛</span> 或 <span class="badge badge-blue">📍 搜尋附近</span></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">區域最愛模式下，可用<strong>「抽籤區域」</strong>選單選擇要從哪個區域抽</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">按下 <strong>✨ 開始抽籤！</strong>，旋轉 3 秒後顯示結果</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">結果會顯示在上方圓圈，清單中對應的店家也會<strong>高亮標示</strong></div>
+      </div>
+    </div>
+    <div class="tip">💡 <strong>連續抽籤不重複：</strong>同一家店不會連續出現兩次（清單只有一家時例外）</div>
+  </div>
+
+  <!-- SEC 2 -->
+  <div class="section" id="sec2">
+    <div class="section-header">
+      <span class="section-icon">✏️</span>
+      <span class="section-title">新增與編輯店家</span>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">在<strong>「新增店家」</strong>區塊填入資料，只有「店家名稱」是必填</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">點選<strong>圖示欄位</strong>，會跳出 Emoji 選單，依分類選擇喜歡的圖示</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">可選填<strong>類型標籤</strong>（日式、台式）、<strong>備註</strong>（走路5分鐘）、<strong>歸屬區域</strong></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">按<strong>新增</strong>完成，或在輸入名稱後按 Enter 快速新增</div>
+      </div>
+    </div>
+    <div class="tip">
+      💡 <strong>編輯店家：</strong>點清單右側的 ✏️ 按鈕，表單會自動填入該店家資料，修改完按「儲存」<br>
+      💡 <strong>刪除店家：</strong>點清單右側的 🗑 按鈕
+    </div>
+  </div>
+
+  <!-- SEC 3 -->
+  <div class="section" id="sec3">
+    <div class="section-header">
+      <span class="section-icon">🗂</span>
+      <span class="section-title">區域管理</span>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:0.75rem;">區域功能讓你把不同地點的店家分開管理，例如「公司附近」、「新竹市東區」、「台北出差」。</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">在<strong>「管理區域」</strong>輸入區域名稱，按「新增區域」建立</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">新增或編輯店家時，在<strong>「歸屬區域」</strong>選擇要歸入哪個區域</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">抽籤時用<strong>「抽籤區域」</strong>選單選好區域，就只從該區域抽</div>
+      </div>
+    </div>
+    <div class="tip">💡 刪除區域不會刪除店家，只是移除店家的區域標記</div>
+  </div>
+
+  <!-- SEC 4 -->
+  <div class="section" id="sec4">
+    <div class="section-header">
+      <span class="section-icon">📍</span>
+      <span class="section-title">搜尋附近餐廳</span>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">切換到 <span class="badge badge-blue">📍 搜尋附近</span> 模式</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">輸入<strong>地點名稱</strong>，選擇搜尋距離，按「🔍 搜尋」</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">搜尋結果出現後，可以直接按<strong>「✨ 開始抽籤！」</strong>從結果中抽</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">想把某家店存起來，點<strong>「＋ 加入最愛」</strong>，會自動建立以搜尋地點命名的區域</div>
+      </div>
+    </div>
+    <div class="tip">
+      💡 <strong>建議輸入方式（效果較好）</strong><br>
+      ✅ 地區名：新竹市東區、台北信義區<br>
+      ✅ 地標：竹蓮市場、新竹公園<br>
+      ✅ 學校／車站：清華大學、新竹火車站<br>
+      ❌ 避免：完整門牌號碼（解析率較低）
+    </div>
+    <div class="info">ℹ️ 搜尋功能使用 OpenStreetMap 免費資料，不需要帳號或費用，但需要網路連線。台灣大城市覆蓋率良好，偏遠地區可能較少資料。</div>
+  </div>
+
+  <!-- SEC 5 -->
+  <div class="section" id="sec5">
+    <div class="section-header">
+      <span class="section-icon">📊</span>
+      <span class="section-title">匯出與匯入 Excel</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>功能</th><th>說明</th></tr>
+        <tr>
+          <td><span class="badge badge-green">📥 匯出</span></td>
+          <td>把所有店家存成 <code>.xlsx</code> 檔，欄位為：名稱、圖示、標籤、備註、區域</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">📤 匯入</span></td>
+          <td>選擇 Excel 檔案，格式同上，匯入後會<strong>取代</strong>現有清單。區域資料也會一起還原。</td>
+        </tr>
+      </table>
+    </div>
+    <div class="tip">
+      💡 <strong>建議養成習慣：</strong>新增或修改店家後，順手按一次「匯出 Excel」備份。<br>
+      萬一瀏覽器資料被清除，重新匯入就能還原所有資料。
+    </div>
+    <div class="tip">
+      💡 <strong>分享給朋友：</strong>匯出 Excel 後，把網址和 .xlsx 一起傳給對方，對方匯入就能用同一份清單。
+    </div>
+  </div>
+
+  <!-- SEC 6 -->
+  <div class="section" id="sec6">
+    <div class="section-header">
+      <span class="section-icon">🏷️</span>
+      <span class="section-title">標籤篩選</span>
+    </div>
+    <p style="font-size:0.9rem;margin-bottom:0.75rem;">標籤和區域可以搭配使用，進一步縮小抽籤範圍。</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">先用<strong>「抽籤區域」</strong>選好區域（例：新竹市東區）</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">再用<strong>「標籤篩選」</strong>選好類型（例：日式）</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">抽籤就只從「新竹市東區」中的「日式」店家抽</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEC 7 -->
+  <div class="section" id="sec7">
+    <div class="section-header">
+      <span class="section-icon">❓</span>
+      <span class="section-title">常見問題</span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>問題</th><th>說明</th></tr>
+        <tr>
+          <td>店家資料不見了？</td>
+          <td>資料存在瀏覽器，清除瀏覽器資料時會一起清除。建議定期用「匯出 Excel」備份。</td>
+        </tr>
+        <tr>
+          <td>換手機/電腦後資料不見？</td>
+          <td>正常現象，資料存在各自的瀏覽器中。用 Excel 匯出再匯入即可同步。</td>
+        </tr>
+        <tr>
+          <td>搜尋附近一直找不到地址？</td>
+          <td>改用地區名、地標或學校名稱，避免輸入完整門牌號碼。</td>
+        </tr>
+        <tr>
+          <td>如何加入手機主畫面？</td>
+          <td>用 Safari 開啟網頁 → 點分享圖示 → 加入主畫面，之後可像 App 一樣開啟。</td>
+        </tr>
+        <tr>
+          <td>可以多人共用同一份清單嗎？</td>
+          <td>可以用 Excel 匯出後傳給對方匯入。若需要即時同步，需要額外的伺服器支援。</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <a class="back-btn" href="index.html">← 回到午餐抽籤機</a>
+
+</div>
+</body>
+</html>
