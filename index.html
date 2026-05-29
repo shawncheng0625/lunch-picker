@@ -260,6 +260,19 @@
   <div id="nearbyCardWrap" style="display:none;">
     <div class="card dashed-blue">
       <div class="card-title blue">📍 搜尋附近餐廳</div>
+
+      <!-- GPS 按鈕 -->
+      <button class="btn btn-blue" id="gpsBtn" onclick="searchByGPS()" style="width:100%;margin-bottom:1rem;padding:0.75rem;font-size:1rem;border-radius:10px;">
+        📍 使用目前位置
+      </button>
+
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.85rem;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:0.78rem;color:var(--muted);">或輸入地點</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <!-- 手動輸入 -->
       <div class="form-row">
         <div class="form-group" style="flex:2;">
           <label>地點名稱或地區</label>
@@ -662,6 +675,50 @@ function calcDistance(lat1,lon1,lat2,lon2) {
 let nearbySearchResults = [];
 let lastSearchLocation = '';
 
+async function searchByGPS() {
+  if (!navigator.geolocation) {
+    showToast('⚠️ 此瀏覽器不支援定位功能');
+    return;
+  }
+  const btn = document.getElementById('gpsBtn');
+  const resultsDiv = document.getElementById('nearbyResults');
+  btn.disabled = true;
+  btn.textContent = '📍 定位中…';
+  resultsDiv.innerHTML = '<div class="nearby-status">📡 正在取得您的位置…</div>';
+
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      lastSearchLocation = '目前位置';
+      btn.textContent = '📍 搜尋中…';
+      resultsDiv.innerHTML = '<div class="nearby-status">🍽️ 搜尋附近餐廳中…</div>';
+      try {
+        const radius = parseInt(document.getElementById('nearbyRadius').value);
+        await doNearbySearch(lat, lon, radius, '目前位置');
+      } catch(err) {
+        resultsDiv.innerHTML = '<div class="nearby-status">⚠️ 搜尋失敗，請確認網路連線</div>';
+        nearbyPool = []; updateSpinState();
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '📍 使用目前位置';
+      }
+    },
+    (error) => {
+      btn.disabled = false;
+      btn.textContent = '📍 使用目前位置';
+      const msgs = {
+        1: '⚠️ 已拒絕定位權限，請在瀏覽器設定中允許存取位置',
+        2: '⚠️ 無法取得位置，請確認 GPS 已開啟',
+        3: '⚠️ 定位逾時，請再試一次',
+      };
+      resultsDiv.innerHTML = `<div class="nearby-status">${msgs[error.code] || '⚠️ 定位失敗'}</div>`;
+      nearbyPool = []; updateSpinState();
+    },
+    { timeout: 10000, enableHighAccuracy: true }
+  );
+}
+
 async function searchNearby() {
   const address = document.getElementById('nearbyAddress').value.trim();
   if (!address) { showToast('請輸入地點！'); return; }
@@ -670,43 +727,43 @@ async function searchNearby() {
   const btn = document.getElementById('nearbySearchBtn');
   btn.disabled = true; btn.textContent = '搜尋中…';
   resultsDiv.innerHTML = '<div class="nearby-status">🔍 定位中，請稍候…</div>';
-
   try {
     const coord = await geocodeAddress(address);
     if (!coord) {
       resultsDiv.innerHTML = `<div class="nearby-status">⚠️ 找不到此地點，建議改用地區名稱、地標或學校名稱</div>`;
       nearbyPool = []; updateSpinState(); return;
     }
-    resultsDiv.innerHTML = '<div class="nearby-status">📡 搜尋附近餐廳中…</div>';
-    const places = await fetchNearbyRestaurants(coord.lat, coord.lon, radius);
-    if (places.length === 0) {
-      resultsDiv.innerHTML = '<div class="nearby-status">😅 附近沒有找到餐廳，試試拉大搜尋距離</div>';
-      nearbyPool = []; updateSpinState(); return;
-    }
-
-    lastSearchLocation = address;
-    nearbySearchResults = places
-      .filter(p => p.tags && p.tags.name)
-      .map(p => {
-        const lat2 = p.lat || p.center?.lat, lon2 = p.lon || p.center?.lon;
-        const dist = (lat2&&lon2) ? calcDistance(coord.lat,coord.lon,lat2,lon2) : null;
-        const cuisine = p.tags.cuisine || p.tags.amenity || '';
-        return { osm_id:p.id, name:p.tags.name, emoji:getEmojiForPlace(cuisine+' '+(p.tags.amenity||'')), cuisine, dist };
-      })
-      .filter(p => p.dist !== null)
-      .sort((a,b) => a.dist-b.dist)
-      .slice(0, 20);
-
-    // 設定 nearbyPool 供抽籤用
-    nearbyPool = nearbySearchResults.map(p => ({ id:'nearby_'+p.osm_id, name:p.name, emoji:p.emoji, tag:p.cuisine||'', note:p.dist?`距離${p.dist}公尺`:'' }));
-    renderNearbyResults();
-    updateSpinState();
+    await doNearbySearch(coord.lat, coord.lon, radius, address);
   } catch(err) {
     resultsDiv.innerHTML = '<div class="nearby-status">⚠️ 搜尋失敗，請確認網路連線後再試</div>';
     nearbyPool = []; updateSpinState();
   } finally {
     btn.disabled = false; btn.textContent = '🔍 搜尋';
   }
+}
+
+async function doNearbySearch(lat, lon, radius, locationName) {
+  const resultsDiv = document.getElementById('nearbyResults');
+  const places = await fetchNearbyRestaurants(lat, lon, radius);
+  if (places.length === 0) {
+    resultsDiv.innerHTML = '<div class="nearby-status">😅 附近沒有找到餐廳，試試拉大搜尋距離</div>';
+    nearbyPool = []; updateSpinState(); return;
+  }
+  lastSearchLocation = locationName;
+  nearbySearchResults = places
+    .filter(p => p.tags && p.tags.name)
+    .map(p => {
+      const lat2 = p.lat || p.center?.lat, lon2 = p.lon || p.center?.lon;
+      const dist = (lat2&&lon2) ? calcDistance(lat,lon,lat2,lon2) : null;
+      const cuisine = p.tags.cuisine || p.tags.amenity || '';
+      return { osm_id:p.id, name:p.tags.name, emoji:getEmojiForPlace(cuisine+' '+(p.tags.amenity||'')), cuisine, dist };
+    })
+    .filter(p => p.dist !== null)
+    .sort((a,b) => a.dist-b.dist)
+    .slice(0, 20);
+  nearbyPool = nearbySearchResults.map(p => ({ id:'nearby_'+p.osm_id, name:p.name, emoji:p.emoji, tag:p.cuisine||'', note:p.dist?`距離${p.dist}公尺`:'' }));
+  renderNearbyResults();
+  updateSpinState();
 }
 
 function renderNearbyResults() {
