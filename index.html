@@ -179,9 +179,6 @@
         <option value="region">🗂 區域最愛</option>
         <option value="nearby">📍 搜尋附近</option>
       </select>
-      <select class="region-select" id="regionSelect" onchange="renderList()">
-        <option value="all">全部區域</option>
-      </select>
     </div>
 
     <button class="spin-btn" id="spinBtn" onclick="spin()">✨ 開始抽籤！</button>
@@ -193,6 +190,12 @@
     <div class="filter-bar" id="filterBar">
       <span class="filter-label">標籤篩選：</span>
       <button class="tag-filter-btn active" onclick="filterTag(this,'all')">全部</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1.25rem;" id="regionFilterRow">
+      <span class="filter-label">抽籤區域：</span>
+      <select id="regionSelectBar" class="mode-select" style="color:var(--blue);border-color:var(--blue-border);" onchange="onRegionBarChange()">
+        <option value="all">全部區域</option>
+      </select>
     </div>
   </div>
 
@@ -401,11 +404,17 @@ function renderRegionSelects() {
   inputRegion.innerHTML = '<option value="">無區域</option>' +
     regions.map(r => `<option value="${escHtml(r)}" ${cur===r?'selected':''}>${escHtml(r)}</option>`).join('');
 
-  // 抽籤模式的區域選單
-  const regionSelect = document.getElementById('regionSelect');
-  const curR = regionSelect.value;
-  regionSelect.innerHTML = '<option value="all">全部區域</option>' +
-    regions.map(r => `<option value="${escHtml(r)}" ${curR===r?'selected':''}>${escHtml(r)}</option>`).join('');
+  // 篩選列的抽籤區域選單
+  const bar = document.getElementById('regionSelectBar');
+  if (bar) {
+    const curR = bar.value;
+    bar.innerHTML = '<option value="all">全部區域</option>' +
+      regions.map(r => `<option value="${escHtml(r)}" ${curR===r?'selected':''}>${escHtml(r)}</option>`).join('');
+  }
+}
+
+function onRegionBarChange() {
+  renderList();
 }
 
 // ── Mode ──
@@ -416,7 +425,7 @@ function onModeChange() {
   document.getElementById('addCardWrap').style.display    = isRegion ? '' : 'none';
   document.getElementById('nearbyCardWrap').style.display = isRegion ? 'none' : '';
   document.getElementById('listWrap').style.display       = isRegion ? '' : 'none';
-  document.getElementById('regionSelect').style.display   = isRegion ? '' : 'none';
+  document.getElementById('regionFilterRow').style.display = isRegion ? '' : 'none';
   nearbyPool = [];
   document.getElementById('nearbyResults').innerHTML = '';
   updateSpinState();
@@ -424,7 +433,8 @@ function onModeChange() {
 
 function getSpinPool() {
   if (currentMode === 'nearby') return nearbyPool;
-  const selRegion = document.getElementById('regionSelect').value;
+  const bar = document.getElementById('regionSelectBar');
+  const selRegion = bar ? bar.value : 'all';
   let pool = restaurants;
   if (selRegion !== 'all') pool = pool.filter(r => r.region === selRegion);
   if (activeTag !== 'all') pool = pool.filter(r => r.tag === activeTag);
@@ -452,7 +462,8 @@ function updateSpinState() {
 // ── Render list ──
 function renderList() {
   if (currentMode === 'nearby') { updateSpinState(); return; }
-  const selRegion = document.getElementById('regionSelect').value;
+  const bar = document.getElementById('regionSelectBar');
+  const selRegion = bar ? bar.value : 'all';
   let filtered = restaurants;
   if (selRegion !== 'all') filtered = filtered.filter(r => r.region === selRegion);
   if (activeTag !== 'all') filtered = filtered.filter(r => r.tag === activeTag);
